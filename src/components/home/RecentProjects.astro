@@ -44,6 +44,8 @@ const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
                 src={p.image.src}
                 srcset={p.image.srcset}
                 sizes={p.image.sizes ?? '100vw'}
+                width={p.image.width}
+                height={p.image.height}
                 loading="lazy"
                 alt={p.title}
                 class="image-15"
@@ -62,10 +64,10 @@ const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
           <a href={p.href} class="link-block-2 w-inline-block" aria-label={p.title}></a>
           <div class="div-block-44" data-feature-reveal>
             {p.image1?.src && (
-              <img src={p.image1.src} srcset={p.image1.srcset} sizes="100vw" loading="lazy" alt="" class="image1" />
+              <img src={p.image1.src} srcset={p.image1.srcset} sizes="100vw" width={p.image1.width} height={p.image1.height} loading="lazy" alt="" class="image1" />
             )}
             {p.image2?.src && (
-              <img src={p.image2.src} srcset={p.image2.srcset} sizes="100vw" loading="lazy" alt="" class="image2" />
+              <img src={p.image2.src} srcset={p.image2.srcset} sizes="100vw" width={p.image2.width} height={p.image2.height} loading="lazy" alt="" class="image2" />
             )}
           </div>
           <div class="div-block-46"></div>

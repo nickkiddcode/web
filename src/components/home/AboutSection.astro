@@ -29,6 +29,8 @@ const arrowLong = '/assets/664d74693ec11ce992b65f5e_arrow-long.png';
         src="/assets/664e7ad15ac85bd9a02514b6_42731592582_699bc72265_o.jpg"
         loading="lazy"
         sizes="100vw"
+        width="2400"
+        height="1600"
         alt="Nick Kidd accepting an award"
         class="innovation-img"
       />
@@ -60,7 +62,7 @@ const arrowLong = '/assets/664d74693ec11ce992b65f5e_arrow-long.png';
             <div class="blog-item-grid">
               <a href={b.href} class="blog-img-link w-inline-block">
                 {b.image?.src && (
-                  <img src={b.image.src} srcset={b.image.srcset} sizes="100vw" loading="lazy" alt="" class="blog-img" />
+                  <img src={b.image.src} srcset={b.image.srcset} sizes="100vw" width={b.image.width} height={b.image.height} loading="lazy" alt="" class="blog-img" />
                 )}
               </a>
               <div class="blog-text">

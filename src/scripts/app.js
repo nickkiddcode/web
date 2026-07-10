@@ -14,6 +14,16 @@ if (!reducedMotion) {
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis;
+  // Late-loading media can still grow the page; keep Lenis's scroll limit in sync
+  // or the wheel hits an invisible wall at the stale limit.
+  let remeasureTimer;
+  const remeasure = new ResizeObserver(() => {
+    lenis.resize();
+    clearTimeout(remeasureTimer);
+    remeasureTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
+  });
+  remeasure.observe(document.body);
 }
 
 // ---------- lazy background video ----------
