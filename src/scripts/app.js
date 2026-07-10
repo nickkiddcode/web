@@ -17,13 +17,11 @@ if (!reducedMotion) {
   window.__lenis = lenis;
   // Late-loading media can still grow the page; keep Lenis's scroll limit in sync
   // or the wheel hits an invisible wall at the stale limit.
-  let remeasureTimer;
-  const remeasure = new ResizeObserver(() => {
-    lenis.resize();
-    clearTimeout(remeasureTimer);
-    remeasureTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
-  });
+  // Keep Lenis's scroll limit in sync if content grows (cheap measure only —
+  // ScrollTrigger.refresh here would hitch mid-scroll, so that runs once on load).
+  const remeasure = new ResizeObserver(() => lenis.resize());
   remeasure.observe(document.body);
+  window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
 }
 
 // ---------- lazy background video ----------

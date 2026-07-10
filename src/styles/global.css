@@ -23,6 +23,13 @@
   --font-heading: 'Zalandosansexpanded Variablefont Wght', Arial, sans-serif;
 }
 
+/* Images carry width/height attributes for layout reservation (CLS + Lenis limit).
+   Webflow's CSS predates those attributes and never resets height, so without this
+   the attribute height gets used verbatim and images squeeze/crop on resize. */
+img {
+  height: auto;
+}
+
 /* Motion-safety: the GSAP layer checks this too, but hard-disable CSS loops for reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   .loader {
