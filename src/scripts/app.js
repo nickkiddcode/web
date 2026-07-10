@@ -1,40 +1,32 @@
-// Site motion layer: Lenis smooth scroll + GSAP/ScrollTrigger.
-// Reproduces the feel of the Webflow interactions (rule 5: behavior, not webflow.js).
+// Site motion layer — Lenis smooth scroll + simple scroll reveals (fade in, rise).
+// Reveals use IntersectionObserver and fire exactly once per element, so nothing
+// re-hides or replays while scrolling back (no rubber-band feel).
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------- smooth scroll ----------
 if (!reducedMotion) {
   const lenis = new Lenis();
-  lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
   window.__lenis = lenis;
-  // Late-loading media can still grow the page; keep Lenis's scroll limit in sync
-  // or the wheel hits an invisible wall at the stale limit.
-  // Keep Lenis's scroll limit in sync if content grows (cheap measure only —
-  // ScrollTrigger.refresh here would hitch mid-scroll, so that runs once on load).
-  const remeasure = new ResizeObserver(() => lenis.resize());
-  remeasure.observe(document.body);
-  window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+  // keep the scroll limit in sync if late-loading media grows the page
+  new ResizeObserver(() => lenis.resize()).observe(document.body);
 }
 
 // ---------- lazy background video ----------
 for (const video of document.querySelectorAll('video[data-lazy-video]')) {
+  if (reducedMotion) continue; // poster only
   const attach = () => {
     for (const s of video.querySelectorAll('source[data-src]')) {
       s.src = s.dataset.src;
       s.removeAttribute('data-src');
     }
     video.load();
-    if (!reducedMotion) video.play().catch(() => {});
+    video.play().catch(() => {});
   };
-  if (reducedMotion) continue; // poster only
   if ('requestIdleCallback' in window) requestIdleCallback(attach, { timeout: 2500 });
   else setTimeout(attach, 1500);
 }
@@ -90,46 +82,40 @@ if (!reducedMotion) {
   });
 }
 
-// ---------- generic scroll reveals ----------
-for (const el of document.querySelectorAll('[data-reveal]')) {
-  if (reducedMotion) break;
-  gsap.from(el, {
-    opacity: 0,
-    y: 20,
-    duration: 0.8,
-    ease: 'power2.out',
-    scrollTrigger: { trigger: el, start: 'top 85%' },
-  });
-}
-
-// ---------- feature blocks: rise in on scroll ----------
-for (const el of document.querySelectorAll('[data-feature-reveal]')) {
-  if (reducedMotion) break;
-  gsap.from(el, {
-    opacity: 0,
-    y: 60,
-    duration: 0.9,
-    ease: 'power2.out',
-    scrollTrigger: { trigger: el, start: 'top 80%' },
-  });
+// ---------- scroll reveals: fade in + rise, once ----------
+if (!reducedMotion) {
+  const targets = document.querySelectorAll('[data-reveal], [data-feature-reveal]');
+  gsap.set(targets, { opacity: 0, y: 24 });
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        io.unobserve(entry.target);
+        gsap.to(entry.target, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', overwrite: true });
+      }
+    },
+    { rootMargin: '0px 0px -12% 0px' }
+  );
+  for (const el of targets) io.observe(el);
 }
 
 // ---------- project cards: hover reveal of summary + view-project line ----------
-for (const card of document.querySelectorAll('[data-project-card]')) {
-  const reveals = card.querySelectorAll('[data-card-reveal]');
-  const line = card.querySelector('[data-card-line]');
-  const overlay = card.querySelector('[data-card-overlay]');
-  if (reducedMotion) break;
-  gsap.set(reveals, { opacity: 0, height: 0 });
-  gsap.set(line, { width: '0%' });
-  gsap.set(overlay, { opacity: 0 });
-  const tl = gsap
-    .timeline({ paused: true })
-    .to(overlay, { opacity: 1, duration: 0.25 }, 0)
-    .to(reveals, { opacity: 1, height: 'auto', duration: 0.35, ease: 'power2.out' }, 0)
-    .to(line, { width: '100%', duration: 0.45, ease: 'power2.out' }, 0.1);
-  card.addEventListener('mouseenter', () => tl.play());
-  card.addEventListener('mouseleave', () => tl.reverse());
+if (!reducedMotion) {
+  for (const card of document.querySelectorAll('[data-project-card]')) {
+    const reveals = card.querySelectorAll('[data-card-reveal]');
+    const line = card.querySelector('[data-card-line]');
+    const overlay = card.querySelector('[data-card-overlay]');
+    gsap.set(reveals, { opacity: 0, height: 0 });
+    gsap.set(line, { width: '0%' });
+    gsap.set(overlay, { opacity: 0 });
+    const tl = gsap
+      .timeline({ paused: true })
+      .to(overlay, { opacity: 1, duration: 0.25 }, 0)
+      .to(reveals, { opacity: 1, height: 'auto', duration: 0.35, ease: 'power2.out' }, 0)
+      .to(line, { width: '100%', duration: 0.45, ease: 'power2.out' }, 0.1);
+    card.addEventListener('mouseenter', () => tl.play());
+    card.addEventListener('mouseleave', () => tl.reverse());
+  }
 }
 
 // ---------- custom "view case" cursor ----------
@@ -150,10 +136,12 @@ if (cursor && !reducedMotion && matchMedia('(pointer: fine)').matches) {
 }
 
 // ---------- nav hover underline ----------
-for (const btn of document.querySelectorAll('.nav-button')) {
-  const line = btn.querySelector('.button-line');
-  if (!line || reducedMotion) break;
-  gsap.set(line, { width: '0%' });
-  btn.addEventListener('mouseenter', () => gsap.to(line, { width: '100%', duration: 0.3, ease: 'power2.out' }));
-  btn.addEventListener('mouseleave', () => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.in' }));
+if (!reducedMotion) {
+  for (const btn of document.querySelectorAll('.nav-button')) {
+    const line = btn.querySelector('.button-line');
+    if (!line) continue;
+    gsap.set(line, { width: '0%' });
+    btn.addEventListener('mouseenter', () => gsap.to(line, { width: '100%', duration: 0.3, ease: 'power2.out' }));
+    btn.addEventListener('mouseleave', () => gsap.to(line, { width: '0%', duration: 0.3, ease: 'power2.in' }));
+  }
 }
