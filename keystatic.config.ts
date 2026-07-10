@@ -1,4 +1,4 @@
-import { config, collection, fields } from '@keystatic/core';
+import { config, collection, singleton, fields } from '@keystatic/core';
 
 // Local mode for now — switches to GitHub mode at the deploy step so Nick can
 // edit from the deployed site (see execution step 8).
@@ -59,6 +59,46 @@ export default config({
         overview: fields.markdoc.inline({ label: 'Overview' }),
         approach: fields.markdoc.inline({ label: 'Approach' }),
         outcome: fields.markdoc.inline({ label: 'Outcome' }),
+      },
+    }),
+    blog: collection({
+      label: 'Blog posts',
+      slugField: 'title',
+      path: 'src/content/blog/*',
+      format: { contentField: 'body' },
+      columns: ['date', 'category'],
+      entryLayout: 'content',
+      schema: {
+        title: fields.slug({ name: { label: 'Title' } }),
+        date: fields.date({ label: 'Date', validation: { isRequired: true } }),
+        category: fields.text({ label: 'Category' }),
+        mainImage: fields.image({
+          label: 'Main image',
+          directory: 'src/assets/blog',
+          publicPath: '../../assets/blog/',
+        }),
+        mainVideo: fields.file({
+          label: 'Main video',
+          description: 'Optional .mp4 — replaces the main image when set (same rule as project heroes).',
+          directory: 'public/assets/blog/video',
+          publicPath: '/assets/blog/video/',
+        }),
+        image1: fields.image({ label: 'Image 1', directory: 'src/assets/blog', publicPath: '../../assets/blog/' }),
+        image2: fields.image({ label: 'Image 2', directory: 'src/assets/blog', publicPath: '../../assets/blog/' }),
+        body: fields.markdoc({ label: 'Body' }),
+      },
+    }),
+  },
+  singletons: {
+    author: singleton({
+      label: 'Author',
+      path: 'src/data/author',
+      format: { data: 'json' },
+      schema: {
+        name: fields.text({ label: 'Name' }),
+        job: fields.text({ label: 'Job title' }),
+        description: fields.text({ label: 'Description' }),
+        image: fields.image({ label: 'Photo', directory: 'public/assets', publicPath: '/assets/' }),
       },
     }),
   },

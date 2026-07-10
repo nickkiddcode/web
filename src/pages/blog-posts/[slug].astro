@@ -1,0 +1,79 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import author from '../../data/author.json';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+const { post } = Astro.props;
+const d = post.data;
+const { Content } = await render(post);
+
+const displayDate = d.date.toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+const lightbox = [d.image1, d.image2].filter((i) => i != null);
+---
+
+<Base title={`${d.title} – Nick Kidd`}>
+  <section class="single-blog-section">
+    <div class="w-layout-blockcontainer main-container w-container">
+      <div class="single-post-top">
+        <h2 class="single-post-title">{d.title}</h2>
+        <div class="single-post-top-meta">
+          <div class="meta-div-boc">
+            <div>DATE</div>
+            <div>{displayDate}</div>
+          </div>
+          <div class="meta-div-boc meta-div-last">
+            <div>CATEGORY</div>
+            <div>{d.category}</div>
+          </div>
+        </div>
+        <div class="div-block"></div>
+      </div>
+      <div class="div-block-25">
+        {/* same conditional the Webflow template used: video wins the slot when set */}
+        {
+          d.mainVideo ? (
+            <video class="blog-img" autoplay loop muted playsinline data-lazy-video aria-label={`${d.title} video`}>
+              <source data-src={d.mainVideo} type="video/mp4" />
+            </video>
+          ) : d.mainImage ? (
+            <Image src={d.mainImage} alt={d.title} class="blog-img" widths={[800, 1280, 1920]} sizes="100vw" />
+          ) : null
+        }
+      </div>
+      <div class="single-post-content">
+        <div class="blog-body w-richtext">
+          <Content />
+        </div>
+        {lightbox.length > 0 && (
+          <div class="single-post-image-grid">
+            {lightbox.map((img) => (
+              <Image src={img!} alt="" widths={[800, 1280]} sizes="50vw" loading="lazy" />
+            ))}
+          </div>
+        )}
+        <div class="post-author">
+          <img src={author.image} loading="lazy" alt={author.name} />
+          <div class="author-infos">
+            <h4 class="author-name">{author.name}</h4>
+            <div class="author-job">{author.job}</div>
+          </div>
+          <p class="author-description">{author.description}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

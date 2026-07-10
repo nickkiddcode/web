@@ -1,8 +1,10 @@
 ---
 // main-content-section: "about me" intro, the interactive bento (accordion),
 // the "No kiddin'" awards block, and the journal blog teaser.
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Bento from './Bento.astro';
-import home from '../../data/home.json';
+const posts = (await getCollection('blog')).sort((a, b) => +b.data.date - +a.data.date);
 const arrowLong = '/assets/664d74693ec11ce992b65f5e_arrow-long.png';
 ---
 
@@ -55,19 +57,19 @@ const arrowLong = '/assets/664d74693ec11ce992b65f5e_arrow-long.png';
   <div class="journal">
     <div class="blog-wrapper w-dyn-list">
       <div role="list" class="blog-list w-dyn-items">
-        {home.blog.map((b) => (
+        {posts.map((p) => (
           <div role="listitem" class="blog-item w-dyn-item" data-reveal>
             <div class="blog-item-grid">
-              <a href={b.href} class="blog-img-link w-inline-block">
-                {b.image?.src && (
-                  <img src={b.image.src} srcset={b.image.srcset} sizes="100vw" width={b.image.width} height={b.image.height} loading="lazy" alt="" class="blog-img" />
+              <a href={`/blog-posts/${p.id}`} class="blog-img-link w-inline-block">
+                {p.data.mainImage && (
+                  <Image src={p.data.mainImage} alt="" class="blog-img" widths={[800, 1280]} sizes="100vw" loading="lazy" />
                 )}
               </a>
               <div class="blog-text">
-                <a href={b.href} class="blog-title-link w-inline-block">
-                  <h4 class="blog-title">{b.title}</h4>
+                <a href={`/blog-posts/${p.id}`} class="blog-title-link w-inline-block">
+                  <h4 class="blog-title">{p.data.title}</h4>
                 </a>
-                <a href={b.href} class="blog-arrow-link w-inline-block" aria-label={b.title}>
+                <a href={`/blog-posts/${p.id}`} class="blog-arrow-link w-inline-block" aria-label={p.data.title}>
                   <img src={arrowLong} loading="lazy" alt="" class="blog-arrow" />
                 </a>
               </div>

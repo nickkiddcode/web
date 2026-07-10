@@ -33,4 +33,20 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { projects };
+// Blog posts: .mdoc body rendered via @astrojs/markdoc; field set mirrors the
+// Webflow CMS (date/category/mainImage + optional video and lightbox slots).
+const blog = defineCollection({
+  loader: glob({ pattern: '*.mdoc', base: './src/content/blog' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      date: z.coerce.date(),
+      category: z.string().default(''),
+      mainImage: image().nullable(),
+      mainVideo: z.string().nullable().default(null),
+      image1: image().nullable().default(null),
+      image2: image().nullable().default(null),
+    }),
+});
+
+export const collections = { projects, blog };
