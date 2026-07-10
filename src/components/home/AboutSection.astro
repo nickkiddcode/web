@@ -1,8 +1,7 @@
 ---
 // main-content-section: "about me" intro, the interactive bento (accordion),
 // the "No kiddin'" awards block, and the journal blog teaser.
-// The accordion bento (kanban, Kidd Effect, science cards, KERNING, mosaic,
-// marquees) is rebuilt in the About-modules step — placeholder marked below.
+import Bento from './Bento.astro';
 import home from '../../data/home.json';
 const arrowLong = '/assets/664d74693ec11ce992b65f5e_arrow-long.png';
 ---
@@ -20,8 +19,7 @@ const arrowLong = '/assets/664d74693ec11ce992b65f5e_arrow-long.png';
     </p>
   </div>
 
-  <!-- TODO(task 6): interactive bento — accordion with Creative Operations kanban, Kidd Effect,
-       tool marquees, behavioral-science cards, KERNING interaction, photo mosaic -->
+  <Bento />
 
   <div class="innocation">
     <div class="innovation-grid">

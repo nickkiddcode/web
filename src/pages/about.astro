@@ -1,0 +1,119 @@
+---
+import Base from '../layouts/Base.astro';
+import about from '../data/about.json';
+---
+
+<Base title="About – Nick Kidd">
+  <section class="section-4">
+    <div class="w-layout-blockcontainer container-9 w-container">
+      <div class="wrapper">
+        <div class="div-block-10">
+          <div class="fade-target1" data-reveal>
+            <h3 class="who-description">{about.quote}<br /></h3>
+          </div>
+          <div class="fadetrigger"></div>
+          <div class="fade-target2" data-reveal>
+            <div class="paragraph">{about.quotePara}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-layout-blockcontainer about-hero w-container">
+      <div class="div-block-57" data-reveal>
+        <img src={about.heroImg} loading="lazy" alt="Nick Kidd" class="image-17" />
+        <div>
+          <h1 class="heading-34">{about.heroHeading}</h1>
+          <p class="paragraph-13">
+            {about.heroParas.map((p, i) => (
+              <>
+                {p}
+                {i < about.heroParas.length - 1 && (
+                  <>
+                    <br />
+                    <br />
+                  </>
+                )}
+              </>
+            ))}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-layout-blockcontainer resume w-container">
+      <h1 class="eyebrow">Experience</h1>
+      {about.experience.map((job) => (
+        <div class="div-block-58" data-reveal>
+          <div class="div-block-59">
+            <div class="year">{job.year}</div>
+          </div>
+          <div class="job">
+            <div class="text-block-23">{job.title}</div>
+            <div class={job.companyClass}>{job.company}</div>
+          </div>
+          <div class="div-block-60">
+            <p class="jobdescription">{job.description}</p>
+            <div class="text-block-24">{job.tags}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="w-layout-blockcontainer container-18 w-container" data-reveal>
+      <h1 class="eyebrow">Some of my beliefs</h1>
+      <div class="w-layout-blockcontainer beliefs w-container">
+        {about.beliefs.map((b) => (
+          <div class="div-block-61">
+            <h1 class="heading-32">{b.num}</h1>
+            <div class="beliefsubhead">{b.title}</div>
+            <div class="text-block-29">{b.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="w-layout-blockcontainer container-15 w-container">
+      <h1 class="eyebrow">Testimonials</h1>
+      <div class="collection-list-wrapper-4 w-dyn-list">
+        <div role="list" class="collection-list-3 w-dyn-items w-row">
+          {about.testimonials.map((t) => (
+            <div role="listitem" class="collection-item-5 w-dyn-item w-col w-col-4">
+              <div class="testimonial" data-reveal>
+                <img src={t.image} loading="lazy" alt={t.name} class="image-18" />
+                <h1 class="heading-35">{t.name}</h1>
+                <div class="text-block-32">{t.role}</div>
+                <div class="text-block-31">{t.text}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <section class="container-15">
+      <div class="clients" data-reveal>
+        <h1 class="eyebrow">select clients</h1>
+        <div class="text-block-20">
+          {about.clients.map((c, i) => (
+            <>
+              <span class={c.cls}>{c.name}</span>
+              {i < about.clients.length - 1 && ' '}
+            </>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <div class="w-layout-blockcontainer container-15 w-container" data-reveal>
+      <h1 class="eyebrow">Awards</h1>
+      {about.awards.map((a) => (
+        <div class="div-block-64">
+          <div class="text-block-30">{a.year}</div>
+          <div class="award">{a.award}</div>
+          <div class="awarddetail">{a.detail}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

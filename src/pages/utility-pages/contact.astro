@@ -1,0 +1,35 @@
+---
+// Contact utility page — faithful except the form, which is excluded by hard
+// rule 4 (no contact form): the mailto + LinkedIn pair stands in for it.
+import Base from '../../layouts/Base.astro';
+const POSTER = '/assets/contact-loop-poster.jpg';
+---
+
+<Base title="Contact – Nick Kidd">
+  <section class="contact-section">
+    <div class="w-background-video w-background-video-atom" style="position:absolute;inset:0;overflow:hidden;">
+      <video
+        autoplay
+        loop
+        muted
+        playsinline
+        poster={POSTER}
+        style={`background-image:url("${POSTER}");width:100%;height:100%;object-fit:cover;`}
+        data-lazy-video
+        aria-hidden="true"
+      >
+        <source data-src="/assets/contact-loop.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <div class="w-layout-blockcontainer main-container w-container">
+      <div class="contact-form">
+        <h2 class="contact-header">unlock your potential</h2>
+        <div class="div-block-54">
+          <a href="#" class="text-block-21" data-eml="contact" data-dmn="nickkidd.net">contact<span aria-hidden="true">&#64;</span>nickkidd.net</a>
+          <div class="text-block-33">|</div>
+          <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener" class="text-block-21">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

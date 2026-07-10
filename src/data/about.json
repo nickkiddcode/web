@@ -1,0 +1,185 @@
+{
+  "quote": "I find the story of every brand",
+  "quotePara": "One of my favorite challenges is mining the core of a brand. It's the place where science, art, business, and a little bit of fantasy all collide. But when you find the story, everything else falls into place.",
+  "heroImg": "/assets/664e7db2648a5782b418f4b4_423004500_10232452459319571_5923361437801515210_n.jpg",
+  "heroHeading": "Hey, I'm Nick.",
+  "heroParas": [
+    "I'm a nerd. So, I'm super passionate about everything I like. I hyper focus on the science of attention like reading the Dungeon Master's Guide. I reverse engineer stories to solve exactly how they evoke emotion.",
+    "I've been called a \"midnight oil connoisseur\", as I'm always up late learning new skills, studying the latest tools, and running my own businesses.",
+    "I have a comprehensive background in B2C, B2B, UX, Web Design, Operations, and more. I'm a hands-on leader serving my team from the bottom up.",
+    "When I'm not pitching to CEOs and stakeholders, I like to write fantasy stories and run my own small businesses from home."
+  ],
+  "experience": [
+    {
+      "year": "2024 - now",
+      "title": "Associate Creative Director",
+      "companyClass": "text-block-25",
+      "company": "Transmission Agency",
+      "description": "I storyboarded, pitched, and co-directed a global, multi-channel campaign spanning video, animation, photography, web, and sales enablement. I maintained $1M+ client relationships, led a creative team of 7 into deeper brand understanding, introduced scalable workflows, and partnered with the VP to drive revenue growth, account expansion, and long-term client retention.",
+      "tags": "Campaign Leadership | Client Retention | Talent Development | AI Creative Engineering | Brand Storytelling"
+    },
+    {
+      "year": "2022 - 2024",
+      "title": "Design Director",
+      "companyClass": "text-block-27",
+      "company": "Pathfinder Studios",
+      "description": "I partnered directly with the CEO to lead creative strategy, UX, and brand execution across websites, SaaS products, and agency initiatives. I managed cross-functional teams, drove business development, and translated complex systems into elegant experiences, often serving as the primary client lead and interim product partner.",
+      "tags": "Creative Operations | UX | Cross-Functional Team Management | Business Development | Behavioral Design"
+    },
+    {
+      "year": "2020 - 2022",
+      "title": "Senior Art Director",
+      "companyClass": "text-block-26",
+      "company": "Transmission Agency",
+      "description": "I led award-winning campaigns for global tech brands. I shaped creative culture, rebuilt agency workflows, partnered on executive-level strategy, and delivered international digital campaigns consistently exceeding deadlines, driving upsells, and strengthening cross-agency collaboration.",
+      "tags": "Elected Chair of Associates Board | Brand Strategy | Executive Communication | Workflow Design"
+    },
+    {
+      "year": "2015 - 2020",
+      "title": "Art Director",
+      "companyClass": "text-block-28",
+      "company": "TracyLocke",
+      "description": "I began as a Studio Artist managing the high output needs of global brands and quality checking every piece that left the agency. Then worked my way up to be an Art Director for Audi and Samsung leading award-winning work.",
+      "tags": "Art Direction | Quality Control | Brand Execution | Campaign Craft | Team Leadership"
+    }
+  ],
+  "beliefs": [
+    {
+      "num": "01",
+      "title": "Craft Matters",
+      "text": "Every pixel, every word, every interaction. The details tell a story."
+    },
+    {
+      "num": "02",
+      "title": "Strategy before aesthetics",
+      "text": "Beautiful work that doesn't solve a problem is just decoration."
+    },
+    {
+      "num": "03",
+      "title": "Collaboration over ego",
+      "text": "The best work happens when everyone brings their expertise to the table."
+    },
+    {
+      "num": "04",
+      "title": "Simplicity wins",
+      "text": "The most powerful ideas are often the simplest ones."
+    }
+  ],
+  "testimonials": [
+    {
+      "image": "/assets/695d3746f3cf3124bdf7be17_6650d99870054c156c5866f8_1715261799953.jpg",
+      "name": "Kevin Forister",
+      "role": "Creative Director",
+      "text": "Nick is one of the most talented, hardworking, and exploratory creatives I've had the pleasure of working with. His high-quality work output and solution-focused concepting skills are perfectly complimented with his ability to take constructive feedback and push himself professionally. Nick's drive and fire for the industry are characteristics that cannot be taught, making him an extremely valuable player on absolutely any team."
+    },
+    {
+      "image": "/assets/695d428f01bdd108693cc026_6650d9d437c50140c0f612af_1599415610982-1-.jpg",
+      "name": "Josh DuMond",
+      "role": "Associate Creative Director",
+      "text": "Nick is a pinnacle example of a curious creative. He is constantly aware of new trends and strives to learn and understand them. I've then seen him apply that knowledge to client asks and internal agency projects. He's constantly looking to innovate and grow not only himself but also the team around him. His motivation and curiosity is infectious."
+    },
+    {
+      "image": "/assets/695d42baa7375b7bb61f37ec_66f3aa65a6fdf4b4462bce82_1653428461604-p-500.jpg",
+      "name": "Pratik Barvaliya",
+      "role": "Full Stack Developer",
+      "text": "Working with Nick has been a transformative experience. As the Director of Design, he brings an incredible blend of creativity, leadership, and strategic vision to every project. His ability to take abstract ideas and turn them into beautiful, user-centered designs is second to none. What sets Nick apart is his approach to leadership. He not only encourages innovation but also ensures that his team has the tools and support they need to excel."
+    },
+    {
+      "image": "/assets/695d42c2b4e67b787afd803e_6650d9e7e55f63a7af6210e5_1587316780914.jpg",
+      "name": "Juliet Walker-Wilde",
+      "role": "Consumer Insights Strategist",
+      "text": "If you're looking for a self-starting thought leader, look no further than Nick. During his time at TracyLocke, he brought forth multiple, actionable pieces on emerging technology and social, that as a strategist I appreciate deeply. That kind of leadership and genuine desire to push the envelope of client and creative thinking is a true rarity in this business, and I am officially jealous of any agency that scoops him up. Do not let this talent pass you by!"
+    },
+    {
+      "image": "/assets/695d4373d2a03f90635283e2_1652119827585.jpg",
+      "name": "Meredith Kern",
+      "role": "Creative Strategist",
+      "text": "I directly reported to Nicholas almost everyday. From the very beginning, it was obvious how driven and passionate Nicholas is about his work at TracyLocke. He always took the time to answer my questions or walk me through an assignment when I didn't fully understand what was being asked of me. Even from the beginning of the summer, he was always asking how I wanted to improve as a designer and how he could help with that."
+    },
+    {
+      "image": "/assets/695d43f97f15060d4a4823c0_1517030253662.jpg",
+      "name": "Vitalie Glodeanu",
+      "role": "Senior Full Stack Developer",
+      "text": "Nick is not just a talented designer, but also a fantastic team leader. He creates an environment where innovation thrives and everyone feels valued. His strategic thinking and understanding of the bigger picture make him a perfect fit for roles that require a blend of creativity and business acumen."
+    }
+  ],
+  "clients": [
+    {
+      "cls": "text-span-9",
+      "name": "Qualcomm"
+    },
+    {
+      "cls": "text-span-3",
+      "name": "Audi"
+    },
+    {
+      "cls": "text-span-10",
+      "name": "Samsung"
+    },
+    {
+      "cls": "text-span-4",
+      "name": "T-Mobile"
+    },
+    {
+      "cls": "text-span-11",
+      "name": "AMD"
+    },
+    {
+      "cls": "text-span-5",
+      "name": "WKKF"
+    },
+    {
+      "cls": "text-span-12",
+      "name": "HPE"
+    },
+    {
+      "cls": "text-span-6",
+      "name": "Pizza Hut"
+    },
+    {
+      "cls": "text-span-7",
+      "name": "Pepsi"
+    },
+    {
+      "cls": "text-span-8",
+      "name": "Nutanix"
+    }
+  ],
+  "awards": [
+    {
+      "year": "2026",
+      "award": "Silver Addy",
+      "detail": "Transmission"
+    },
+    {
+      "year": "2024",
+      "award": "Gold Marcomm",
+      "detail": "Freelance"
+    },
+    {
+      "year": "2019",
+      "award": "32 Under 32",
+      "detail": "TracyLocke"
+    },
+    {
+      "year": "2018",
+      "award": "Gold National Addy",
+      "detail": "TracyLocke"
+    },
+    {
+      "year": "2018",
+      "award": "2 Silver National Addy's",
+      "detail": "TracyLocke"
+    },
+    {
+      "year": "2018",
+      "award": "Lürzer’s Archive’s 200 Best Illustrators",
+      "detail": "TracyLocke"
+    },
+    {
+      "year": "2018",
+      "award": "Gold DSVC Award",
+      "detail": "TracyLocke"
+    }
+  ]
+}

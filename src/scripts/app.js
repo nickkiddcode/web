@@ -125,6 +125,133 @@ if (!reducedMotion) {
   }
 }
 
+// ---------- bento micro-interactions (behaviors recovered from Webflow IX2 data) ----------
+// User-initiated (click/hover) — active under reduced motion too; the automatic
+// billboard loop and scroll parallax are individually motion-guarded below.
+{
+  // statusblocks: hover flips the label (statusstart <-> statuscomplete)
+  for (const block of document.querySelectorAll('[data-status]')) {
+    const start = block.querySelector('.statusstart');
+    const done = block.querySelector('.statuscomplete');
+    if (!start || !done) continue;
+    done.style.display = 'none';
+    const flip = (showDone) => {
+      start.style.display = showDone ? 'none' : 'block';
+      done.style.display = showDone ? 'block' : 'none';
+    };
+    block.addEventListener('mouseenter', () => flip(true));
+    block.addEventListener('mouseleave', () => block.closest('.builder_feature-2_ui-left')?.dataset.kidd !== 'on' && flip(false));
+  }
+
+  // "See The Kidd Effect": every status flips to its complete state and goes green (IX2 a-60)
+  const kiddBtn = document.querySelector('[data-kidd-effect]');
+  const runKidd = () => {
+    const wrap = kiddBtn.closest('.builder_feature-2_ui-left');
+    if (wrap) wrap.dataset.kidd = 'on';
+    for (const block of document.querySelectorAll('[data-status]')) {
+      block.querySelector('.statusstart').style.display = 'none';
+      block.querySelector('.statuscomplete').style.display = 'block';
+      gsap.to(block, { backgroundColor: 'rgb(104,255,134)', duration: 0.2 });
+    }
+  };
+  kiddBtn?.addEventListener('click', runKidd);
+  kiddBtn?.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && runKidd());
+
+  // science card: each plus click pops the next fact in (IX2 a-46/a-38/a-49, outBack scale)
+  const facts = [...document.querySelectorAll('[data-science-fact]')];
+  gsap.set(facts, { display: 'none', opacity: 0, scale: 0.9 });
+  let revealed = 0;
+  const plusButtons = [...document.querySelectorAll('[data-science-plus]')];
+  if (plusButtons[1]) plusButtons[1].style.display = 'none';
+  const addScience = () => {
+    if (revealed >= 3) return;
+    const batch = revealed === 2 ? facts.slice(2) : [facts[revealed]]; // click 3 reveals both _4 facts
+    gsap.set(batch, { display: 'flex' });
+    gsap.to(batch, { opacity: 1, duration: 0.3, ease: 'power1.out' });
+    gsap.to(batch, { scale: 1, duration: 0.3, ease: 'back.out(1.7)' });
+    revealed++;
+    if (revealed === 2 && plusButtons[1]) {
+      // IX2 a-38 swaps which plus button shows for the final click
+      plusButtons[0].style.display = 'none';
+      plusButtons[1].style.display = 'flex';
+    }
+    if (revealed >= 3) for (const b of plusButtons) b.style.display = 'none';
+  };
+  for (const b of plusButtons) {
+    b.addEventListener('click', addScience);
+    b.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && addScience());
+  }
+
+  // KERNING: the .wrong letters sit +3px; "Fix it!" slides them into place (IX2 a-62)
+  const kernBtn = document.querySelector('[data-kerning-fix]');
+  const fixKerning = () => gsap.to('.text-block-8.wrong', { x: -3, duration: 0.5, ease: 'power2.out' });
+  kernBtn?.addEventListener('click', fixKerning);
+  kernBtn?.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && fixKerning());
+
+  // Marketing Maestro billboards: auto slideshow — stack up one per second, then reset (IX2 a-63)
+  const stack = document.querySelector('[data-billboards]');
+  if (stack) {
+    const layers = [...stack.querySelectorAll('.image-12')];
+    for (const l of layers.slice(1)) l.style.display = 'none';
+    let step = 0;
+    let timer;
+    const tick = () => {
+      step++;
+      if (step < layers.length) layers[step].style.display = 'block';
+      else if (step === layers.length) {
+        for (const l of layers.slice(1, -1)) l.style.display = 'none';
+      } else {
+        layers[layers.length - 1].style.display = 'none';
+        step = 0;
+      }
+    };
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !timer && !reducedMotion) timer = setInterval(tick, 1000);
+      else if (!e.isIntersecting && timer) { clearInterval(timer); timer = null; }
+    });
+    io.observe(stack);
+  }
+
+  // Midnight Oil switch: knob slides 3.9rem + spins 360°, card goes dark (IX2 a-64/a-65)
+  const toggle = document.querySelector('[data-mode-toggle]');
+  if (toggle) {
+    const knob = toggle.querySelector('.switch-button');
+    const card = toggle.closest('.builder_feature-card');
+    const sun = toggle.querySelectorAll('[data-sun]');
+    const moon = toggle.querySelector('[data-moon]');
+    let on = false;
+    const flip = () => {
+      on = !on;
+      toggle.setAttribute('aria-checked', String(on));
+      gsap.to(knob, { x: on ? '3.9rem' : 0, rotation: on ? 360 : 0, duration: 0.5, ease: 'power1.inOut' });
+      gsap.to(card, { backgroundColor: on ? '#1c1c1d' : '#e7e7e7', duration: 0.5 });
+      gsap.to(card.querySelectorAll('.oil'), { color: on ? '#f2f0ef' : '#161616', duration: 0.5 });
+      gsap.to(toggle, { borderColor: on ? '#f2f0ef' : '#141414', duration: 0.5 });
+      gsap.to(sun, { opacity: on ? 0 : 1, duration: 0.3 });
+      gsap.to(moon, { opacity: on ? 1 : 0, duration: 0.3 });
+    };
+    toggle.addEventListener('click', flip);
+    toggle.addEventListener('keydown', (e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), flip()));
+  }
+
+  // kanban wireframes: gentle scroll parallax (IX2 a-42, ±3rem)
+  if (!reducedMotion && window.__lenis) {
+    const frames = [...document.querySelectorAll('[data-wireframe]')];
+    if (frames.length) {
+      window.__lenis.on('scroll', () => {
+        const vh = innerHeight;
+        for (const f of frames) {
+          const r = f.parentElement.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > vh) continue;
+          const progress = 1 - (r.top + r.height / 2) / vh; // 0 entering → 1 leaving
+          const dir = +f.dataset.wireframe;
+          f.style.transform = `translateY(${(progress - 0.5) * 2 * 3 * dir}rem)`;
+        }
+      });
+    }
+  }
+}
+
 // ---------- custom "view case" cursor ----------
 const cursor = document.querySelector('.cursor');
 if (cursor && !reducedMotion && matchMedia('(pointer: fine)').matches) {

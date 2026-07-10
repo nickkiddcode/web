@@ -1,0 +1,327 @@
+---
+// The interactive "about me" bento — faithful transcription of the accordion
+// grids from the crawled homepage. Micro-interaction behaviors were recovered
+// from the site's Webflow IX2 data (see app.js) and rebuilt in GSAP/CSS.
+const A = '/assets';
+const tools = [
+  ['670d823b54eb594420ec570a_webflow.png', 'Webflow'],
+  ['670d823bf4b23816e2e496e0_figma.png', 'Figma'],
+  ['670d823b46647148fca40380_photoshop.png', 'Photoshop'],
+  ['670d823b5717c9b1e2cf3c26_indesign.png', 'InDesign'],
+  ['670d823b7b71aa00c4f272e6_illustrator.png', 'Illustrator'],
+  ['670d823ba29b3fc63a4398d6_premiere.png', 'Premiere'],
+  ['670d823df4b23816e2e497f1_aftereffects.png', 'After Effects'],
+  ['670d823d65612663d086fd98_miro.png', 'Miro'],
+  ['670d823d0334f3320bbd76c5_notion.png', 'Notion'],
+  ['670d823df4b23816e2e4982f_clickup.png', 'ClickUp'],
+  ['670d823dd15ef006e5258121_apollo.png', 'Apollo'],
+];
+const billboards = [
+  '670ddb099626ec1b5f6667b3_audibillboard.png',
+  '670ddb0ac8133002fddf046c_samsungbillboard.png',
+  '670ddb0b1822c1949d9422a6_hpbillboard.png',
+  '670ddb09251e46afcd140384_pathfinderbillboard.png',
+  '670ddb0a22e896a0e465d671_wkkfbillboard.png',
+  '670ddb09ee398bfb07507bab_nkbillboard.png',
+];
+const mosaic = [
+  ['_01', '664e7db2648a5782b418f4b4_423004500_10232452459319571_5923361437801515210_n.jpg', 'Mosaic 1'],
+  ['_02', '664e7ca0887664956c8dd22c_72611575_926618584385915_7408812993552580608_n.jpg', 'Mosaic 2'],
+  ['_03', '664e80e3b066266abfe8cba9_image_2024-05-22_183353395.png', 'Mosaic 3'],
+  ['_04', '664e7f11a78065d8bd32c1eb_396716266_10232026280785374_861907570268360280_n.jpg', 'Mosaic 5'],
+  ['_05', '664e8024304b0c4b7c96e97c_image_2024-05-22_183043369.png', 'Mosaic 4'],
+  ['_06', '664e7e3791fe2ba8d212afb9_421592493_10232454886700254_5396808740956520539_n.jpg', 'Mosaic 6'],
+];
+const science = [
+  ['_2', 'Cognitive Load', 'Mental effort required to process and retain information.'],
+  ['_3', 'Progressive Disclosure', 'Gradually reveal info to reduce complexity and overload.'],
+  ['_4', 'Choice Paradox', 'More choices more problems'],
+  ['_4', 'Banner Blindness', 'We naturally filter out noise like ads.'],
+];
+const plusSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 35 35" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" role="img"><rect width="35" height="35" rx="9" fill="currentColor"/><path d="M25.5 17V18C25.5 18.1326 25.4473 18.2598 25.3536 18.3536C25.2598 18.4473 25.1326 18.5 25 18.5H18.5V25C18.5 25.1326 18.4473 25.2598 18.3536 25.3536C18.2598 25.4473 18.1326 25.5 18 25.5H17C16.8674 25.5 16.7402 25.4473 16.6464 25.3536C16.5527 25.2598 16.5 25.1326 16.5 25V18.5H10C9.86739 18.5 9.74021 18.4473 9.64645 18.3536C9.55268 18.2598 9.5 18.1326 9.5 18V17C9.5 16.725 9.725 16.5 10 16.5H16.5V10C16.5 9.725 16.725 9.5 17 9.5H18C18.275 9.5 18.5 9.725 18.5 10V16.5H25C25.275 16.5 25.5 16.725 25.5 17Z" fill="white"/></svg>`;
+---
+
+<div class="accordion">
+  <div class="accordion_content">
+    <div class="w-layout-grid builder_feature-grid-2">
+      <div class="builder_feature-card black">
+        <div class="builder_feature-top">
+          <div class="text-align-center max-width-xsmall">
+            <div class="margin-bottom margin-xsmall">
+              <h3 class="heading-large">Ideas Are My Superpower</h3>
+            </div>
+            <p class="text-color-darkgrey">I’ve led teams at iconic agencies with demanding clients, juggling multiple projects under tight deadlines. I’ve mastered the art of crafting award-winning ideas quickly. I turn strategy into stories by blending research with &quot;what if&quot;. I now use my experience to unlock the creative potential of others.</p>
+          </div>
+        </div>
+        <div class="builder_feature-bottom feature-1">
+          <img src={`${A}/670ec35af324521ca00b06f4_20240110_180340-min.png`} loading="lazy" sizes="100vw" alt="" class="image-13" />
+        </div>
+        <div class="builder-card-overlay pointer-none"></div>
+      </div>
+
+      <div class="builder_feature-card">
+        <div class="builder_feature-top">
+          <div class="text-align-center max-width-xsmall">
+            <div class="margin-bottom margin-xsmall">
+              <h3 class="heading-large">Creative Operations</h3>
+            </div>
+            <p class="text-color-darkgrey">Great work starts with seamless collaboration. I’ve led cross-functional teams by removing bottlenecks and building workflows that empower each team member. My leadership ensures projects stay on track without sacrificing creativity.</p>
+          </div>
+        </div>
+        <div class="builder_feature-bottom feature-2">
+          <div class="builder_feature-2_ui-block">
+            <div class="builder_feature-2_ui-top">
+              <div class="builder_feature-2_ui-top-text">Sprint 1</div>
+              <div class="builder_feature-2_ui-top-text _2">Replace</div>
+              <div class="builder_feature-2_ui-close"></div>
+            </div>
+            <div class="builder_feature-2_ui-left-container">
+              <div class="builder_feature-2_ui-left _1">
+                <div class="feature_ui-divider padding-none"></div>
+                <div class="builder_feature-2_ui-left-name">
+                  <div class="text-color-darkgrey">Discovery</div>
+                  <div class="statusblock yellow" data-status>
+                    <div class="statuscomplete">Complete</div>
+                    <div class="statusstart">In Progress</div>
+                  </div>
+                </div>
+                <div class="builder_feature-2_ui-left-name">
+                  <div class="text-color-darkgrey">Ideation</div>
+                  <div class="statusblock yellow" data-status>
+                    <div class="statusstart">Getting There</div>
+                    <div class="statuscomplete">Complete</div>
+                  </div>
+                </div>
+                <div class="builder_feature-2_ui-left-name">
+                  <div class="text-color-darkgrey">Win Awards</div>
+                  <div class="statusblock red" data-status>
+                    <div class="statusstart">Blocked</div>
+                    <div class="statuscomplete">Complete</div>
+                  </div>
+                </div>
+                <div class="builder_feature-2_ui-left-name">
+                  <div class="text-color-darkgrey">World Domination</div>
+                  <div class="statusblock gray" data-status>
+                    <div class="statusstart">Not Started</div>
+                    <div class="statuscomplete">Muahaha</div>
+                  </div>
+                </div>
+                <div class="builder_feature-2_ui-button" data-kidd-effect role="button" tabindex="0">
+                  <div class="text-block-7">See The Kidd Effect</div>
+                </div>
+              </div>
+            </div>
+            <div class="builder_feature-2_ui-right-container">
+              <div class="builder_feature-2_ui-image _1" data-wireframe="1">
+                <img loading="lazy" src={`${A}/670d74a45717c9b1e2c36642_header_01.svg`} alt="Header wireframe 1" />
+                <div class="text-size-small text-color-darkgrey">Header 1</div>
+              </div>
+              <div class="builder_feature-2_ui-image _2" data-wireframe="-1">
+                <img loading="lazy" src={`${A}/670d74a55717c9b1e2c366a9_header_02.svg`} alt="Header wireframe 2" />
+                <div class="text-size-small text-color-darkgrey">Header 2</div>
+              </div>
+              <div class="builder_feature-2_ui-image _3" data-wireframe="1">
+                <img loading="lazy" src={`${A}/670d74a45717c9b1e2c36627_header_03.svg`} alt="Header wireframe 3" />
+                <div class="text-size-small text-color-darkgrey">Header 3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="builder_feature-card feature-2">
+        <div class="builder_feature-3-left">
+          <div class="margin-bottom margin-xsmall">
+            <h3 class="heading-large">Some Tools I Love</h3>
+          </div>
+          <p class="text-color-darkgrey">I&#x27;m always eager to learn new tools and apps as they come out. If I&#x27;m not working, I&#x27;m learning.<br /></p>
+        </div>
+        <div class="builder_feature-3-right">
+          <div class="builder_feature-3-right-dock">
+            <div class="brand-logo-wrapper">
+              <div class="client-logo-slider-wrapper">
+                <div class="client-logo-slider">
+                  <div class="items">
+                    {tools.map(([f, name]) => (
+                      <img loading="eager" src={`${A}/${f}`} alt={`${name} logo`} class="item" />
+                    ))}
+                  </div>
+                  <div class="items" aria-hidden="true">
+                    {tools.map(([f, name]) => (
+                      <img loading="eager" src={`${A}/${f}`} alt="" class="item" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-layout-grid builder_feature-grid-6">
+      <div class="builder_feature-card feature-7">
+        <div class="builder_feature-top">
+          <div class="text-align-center max-width-xsmall">
+            <div class="margin-bottom margin-xsmall">
+              <h3 class="heading-large">Marketing Maestro</h3>
+            </div>
+            <p class="text-color-darkgrey">For over a decade, I&#x27;ve led global 360 degree campaigns for iconic brands, concepted in-store marketing, directed advertising strategies, written disruptive headlines, and designed award-winning visuals. </p>
+          </div>
+        </div>
+        <div class="builder_feature-bottom feature-7">
+          <div class="div-block-31" data-billboards>
+            {billboards.map((f, i) => (
+              <img src={`${A}/${f}`} loading="lazy" sizes="100vw" alt="" class={`image-12 _${i + 1}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="builder_feature-card">
+        <div class="builder_feature-top">
+          <div class="text-align-center max-width-xsmall">
+            <div class="margin-bottom margin-xsmall">
+              <h3 class="heading-large">Design Backed by Science</h3>
+            </div>
+            <p class="text-color-darkgrey">I&#x27;m obsessed with behavioral science in design. I&#x27;ve led web design for giants like Samsung and WKKF, in-store experiences for Audi, and complex product direction for SaaS and Enterprise software startups. I bring science-backed insights to every stage, from prototyping to launch</p>
+          </div>
+        </div>
+        <div class="builder_feature-bottom feature-1">
+          <div class="builder_feature-1_ui-container">
+            <div class="builder_feature-1_ui-block">
+              <div class="builder_feature-1-plus-wrapper _1" data-science-plus role="button" tabindex="0" aria-label="Add some science">
+                <div class="builder_feature-1-plus w-embed" set:html={plusSvg} />
+              </div>
+              <div class="builder_feature-1-plus-wrapper _2" data-science-plus role="button" tabindex="0" aria-label="Add some science">
+                <div class="builder_feature-1-plus w-embed" set:html={plusSvg} />
+              </div>
+              <div class="builder_feature-1_ui-block-top">
+                <div>Add Some Science</div>
+                <div class="builder_feature-1-ellipses w-embed">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 19 5" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" role="img"><circle cx="2.5" cy="2.5" r="2.5" fill="currentColor"/><circle cx="9.5" cy="2.5" r="2.5" fill="currentColor"/><circle cx="16.5" cy="2.5" r="2.5" fill="currentColor"/></svg>
+                </div>
+              </div>
+              <div class="builder_feature-1_ui-block-bottom">
+                <div class="builder_feature-1_ui-block-inner">
+                  <div>Fitts&#x27; Law</div>
+                  <div class="text-size-small text-weight-normal text-color-darkgrey">Closer and larger targets are faster to interact with.</div>
+                </div>
+                {science.map(([cls, title, text]) => (
+                  <div class={`builder_feature-1_ui-block-inner ${cls}`} data-science-fact>
+                    <div>{title}</div>
+                    <div class="text-size-small text-weight-normal text-color-darkgrey">{text}</div>
+                  </div>
+                ))}
+              </div>
+              <div class="builder_feature-1-line-wrapper">
+                <div class="builder_feature-1_ui-line"></div>
+              </div>
+            </div>
+            <div class="builder_feature-1-line-wrapper pointer-none">
+              <div class="builder_feature-1_ui-line"></div>
+            </div>
+            <div class="builder-card-overlay pointer-none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="builder_feature-card feature-9">
+        <div class="builder_feature-top feature-11">
+          <div class="text-align-center max-width-xsmall">
+            <div class="margin-bottom margin-xsmall">
+              <h3 class="heading-custom-h3">Strong Foundations</h3>
+            </div>
+            <p class="text-color-darkgrey">I began as a print production studio designer, juggling hundreds of projects for international brands. I understand the importance of the tiny details. </p>
+          </div>
+        </div>
+        <div class="builder_feature-bottom feature-9">
+          <div class="text-block-8">K</div>
+          <div class="text-block-8 wrong">E</div>
+          <div class="text-block-8">R</div>
+          <div class="text-block-8">N</div>
+          <div class="text-block-8">I</div>
+          <div class="text-block-8">N</div>
+          <div class="text-block-8 wrong">G</div>
+        </div>
+        <div class="div-block-30">
+          <div class="kerningbutton" data-kerning-fix role="button" tabindex="0">
+            <div class="text-block-7">Fix it!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="builder_feature-card feature-10">
+        <div class="builder_feature-top feature-11">
+          <div class="text-align-center max-width-xsmall">
+            <div class="margin-bottom margin-xsmall">
+              <h3 class="heading-custom-h3">Research and Strategy</h3>
+            </div>
+            <p class="text-color-darkgrey">I love diving into strategy, research, and marketing insights. Check out my Notion to see a few of the insights I&#x27;ve picked up over the years.</p>
+          </div>
+        </div>
+        <div class="builder_feature-bottom feature-10">
+          <a href="https://funny-skiff-43e.notion.site/Nick-s-Design-Resources-1212b623f8d4806e8d9ed8b167f03c0b?pvs=4" target="_blank" rel="noopener" class="div-block-32 w-inline-block">
+            <img loading="eager" src={`${A}/670d823d0334f3320bbd76c5_notion.png`} alt="Notion logo" class="notion" />
+            <div class="text-block-9">Nick&#x27;s Notion</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="builder_feature-card feature-11">
+        <div class="builder_feature-top feature-11">
+          <div class="max-width-xsmall">
+            <div class="margin-bottom margin-xsmall">
+              <h3 class="heading-custom-h3 oil">Midnight Oil Connoisseur</h3>
+            </div>
+            <p class="text-color-darkgrey oil">I&#x27;ve been told my brain never shuts off. If I&#x27;m not working, I&#x27;m starting my own business, learning new skills, or picking up new hobbies.</p>
+          </div>
+        </div>
+        <div class="builder_feature-bottom feature-11">
+          <div class="builder_feature-11_ui">
+            <div id="toggleStyleButton" class="switch align-center" data-mode-toggle role="switch" aria-checked="false" tabindex="0" aria-label="Toggle midnight mode">
+              <div class="switch-button">
+                <div class="mode-lottie" data-mode-icon>
+                  <svg viewBox="0 0 24 24" width="100%" fill="none" stroke="#141414" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" data-sun />
+                    <g data-sun>
+                      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+                    </g>
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" data-moon style="opacity:0" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mosaic-effect">
+  <div class="w-layout-grid mosaic-grid">
+    {mosaic.map(([cls, f, alt]) => (
+      <div class={`mosaic-grid-item ${cls}`}>
+        <img src={`${A}/${f}`} loading="lazy" sizes="100vw" alt={alt} class="mosaic-image" />
+      </div>
+    ))}
+  </div>
+</div>
+
+<style is:global>
+  /* logo dock marquee — ported from the page's embedded CSS */
+  .client-logo-slider {
+    animation: moveSlideshow 20s linear infinite;
+  }
+  @keyframes moveSlideshow {
+    100% {
+      transform: translateX(-50.8%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .client-logo-slider {
+      animation: none;
+    }
+  }
+</style>
