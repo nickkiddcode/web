@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Cursor from '../components/home/Cursor.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title="Work – Nick Kidd" bodyClass="body-4">
+  <Cursor />
+  <section class="portfolio-section portfolio-page-section">
+    <div class="moving-text-loop">
+      <div class="moving-text-container">
+        <div class="moving-text" data-marquee>
+          <span>
+            Creative direction.Storytelling.Web design.User experience.product design.Social Media.Operations.Shopper
+            marketing.Email marketing.Product Design.Video Production.copywriting.midjourney.Branding and
+            Identity.illustration.image retouching.tech trends.pitch decks.Wireframing.
+          </span>
+          <span aria-hidden="true">
+            Creative direction.Storytelling.Web design.User experience.product design.Social Media.Operations.Shopper
+            marketing.Email marketing.Product Design.Video Production.copywriting.midjourney.Branding and
+            Identity.illustration.image retouching.tech trends.pitch decks.Wireframing.
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="w-layout-blockcontainer main-container w-container"></div>
+    <div class="portfolio-wrapper w-dyn-list">
+      <div role="list" class="portfolio-list w-dyn-items">
+        {projects.map((p) => (
+          <div role="listitem" class="collection-item w-dyn-item">
+            <a href={`/projects/${p.id}`} class="project-item w-inline-block" data-reveal>
+              <div class="projects-img-wrapp"></div>
+              <div class="project-text">
+                <h3 class="projects-title-page">{p.data.title}</h3>
+                <div class="slash">/</div>
+                <div class="proj-category">{p.data.category}</div>
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

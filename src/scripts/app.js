@@ -99,6 +99,13 @@ if (!reducedMotion) {
   for (const el of targets) io.observe(el);
 }
 
+// ---------- marquees: seamless infinite drift (text duplicated in markup) ----------
+if (!reducedMotion) {
+  for (const m of document.querySelectorAll('[data-marquee]')) {
+    gsap.to(m, { xPercent: -50, repeat: -1, ease: 'none', duration: 30 });
+  }
+}
+
 // ---------- project cards: hover reveal of summary + view-project line ----------
 if (!reducedMotion) {
   for (const card of document.querySelectorAll('[data-project-card]')) {

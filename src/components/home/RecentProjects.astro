@@ -1,9 +1,11 @@
 ---
-// "Recent Projects" — card grid + full-bleed feature list, both inside the
-// footer.projects wrapper exactly as the source page nests them.
-// Data extracted from the crawl (src/data/home.json); becomes the Projects
-// collection when the Keystatic schema lands.
-import home from '../../data/home.json';
+// "Recent Projects" — card grid (hidden on the live site, markup preserved) +
+// full-bleed feature list, both inside the footer.projects wrapper as in the
+// source. Driven by the Projects collection so Keystatic edits flow through.
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
 ---
 
@@ -18,18 +20,18 @@ const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
 
   <div class="collection-list-wrapper-2 w-dyn-list">
     <div role="list" class="w-dyn-items">
-      {home.grid.map((p) => (
+      {projects.map((p) => (
         <div role="listitem" class="collection-item-3 w-dyn-item" data-project-card>
           <div class="div-block-34">
-            <a href={p.href} class="link-block w-inline-block" aria-label={p.title}></a>
+            <a href={`/projects/${p.id}`} class="link-block w-inline-block" aria-label={p.data.title}></a>
             <div class="projecttext">
               <div class="div-block-36">
-                <div class="text-block-10">{p.category}</div>
+                <div class="text-block-10">{p.data.category}</div>
                 <div class="text-block-12">| </div>
-                <div class="text-block-11">{p.year}</div>
+                <div class="text-block-11">{p.data.year}</div>
               </div>
-              <h4 class="heading-28">{p.title}</h4>
-              {p.summary && <p class="projectsummary" data-card-reveal>{p.summary}</p>}
+              <h4 class="heading-28">{p.data.title}</h4>
+              {p.data.summary && <p class="projectsummary" data-card-reveal>{p.data.summary}</p>}
               <div class="div-block-40" data-card-reveal>
                 <div class="div-block-37">
                   <div class="text-block-13">View Project</div>
@@ -39,17 +41,8 @@ const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
               </div>
             </div>
             <div class="div-block-39" data-card-overlay></div>
-            {p.image?.src && (
-              <img
-                src={p.image.src}
-                srcset={p.image.srcset}
-                sizes={p.image.sizes ?? '100vw'}
-                width={p.image.width}
-                height={p.image.height}
-                loading="lazy"
-                alt={p.title}
-                class="image-15"
-              />
+            {p.data.image1 && (
+              <Image src={p.data.image1} alt={p.data.title} class="image-15" widths={[800, 1280]} sizes="100vw" loading="lazy" />
             )}
           </div>
         </div>
@@ -59,26 +52,26 @@ const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
 
   <div class="collection-list-wrapper-3 w-dyn-list">
     <div role="list" class="collection-list-2 w-dyn-items">
-      {home.features.map((p) => (
+      {projects.map((p) => (
         <div role="listitem" class="collection-item-4 w-dyn-item">
-          <a href={p.href} class="link-block-2 w-inline-block" aria-label={p.title}></a>
+          <a href={`/projects/${p.id}`} class="link-block-2 w-inline-block" aria-label={p.data.title}></a>
           <div class="div-block-44" data-feature-reveal>
-            {p.image1?.src && (
-              <img src={p.image1.src} srcset={p.image1.srcset} sizes="100vw" width={p.image1.width} height={p.image1.height} loading="lazy" alt="" class="image1" />
+            {p.data.image1 && (
+              <Image src={p.data.image1} alt="" class="image1" widths={[800, 1280, 1920]} sizes="100vw" loading="lazy" />
             )}
-            {p.image2?.src && (
-              <img src={p.image2.src} srcset={p.image2.srcset} sizes="100vw" width={p.image2.width} height={p.image2.height} loading="lazy" alt="" class="image2" />
+            {p.data.image2 && (
+              <Image src={p.data.image2} alt="" class="image2" widths={[800, 1280, 1920]} sizes="100vw" loading="lazy" />
             )}
           </div>
           <div class="div-block-46"></div>
           <div class="div-block-41" data-feature-reveal>
             <div class="div-block-45">
               <div class="div-block-36">
-                <div class="projdescriptionhead white">{p.category}</div>
+                <div class="projdescriptionhead white">{p.data.category}</div>
                 <div class="projdescriptionhead white">| </div>
-                <div class="projdescriptionhead white">{p.year}</div>
+                <div class="projdescriptionhead white">{p.data.year}</div>
               </div>
-              <h1 class="heading-29">{p.title}</h1>
+              <h1 class="heading-29">{p.data.title}</h1>
               <div class="div-block-40">
                 <div class="div-block-37">
                   <div class="text-block-13">View Project</div>
@@ -88,7 +81,7 @@ const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
               </div>
             </div>
             <div class="div-block-47">
-              <p class="paragraph-9">{p.summary}</p>
+              <p class="paragraph-9">{p.data.summary}</p>
             </div>
           </div>
         </div>

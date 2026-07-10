@@ -1,9 +1,13 @@
 ---
-// Dark projects-section at the very bottom: three typographic showcase rows
-// + "THAT'S JUST A TASTE" send-off. Mirrors the source DOM (the image links
-// are empty click targets in the published site too).
-import home from '../../data/home.json';
-const [one, two, three] = home.showcase;
+// Dark projects-section at the very bottom (display:none on the live site,
+// markup preserved): three typographic showcase rows for the top-ordered
+// projects + "THAT'S JUST A TASTE" send-off.
+import { getCollection } from 'astro:content';
+
+const [one, two, three] = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3)
+  .map((p) => ({ href: `/projects/${p.id}`, title: p.data.title, category: p.data.category }));
 ---
 
 <section class="projects-section">

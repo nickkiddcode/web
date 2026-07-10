@@ -1,0 +1,28 @@
+{
+  "title": "Dragonfly Brand Launch",
+  "order": 4,
+  "client": "Qualcomm Dragonfly",
+  "role": "Creative Director",
+  "category": "Video Production",
+  "year": "2026",
+  "summary": "We launched Qualcomm's new flagship AI inference brand for them to announce in front of millions, and won the affection of their CCO and CMO.",
+  "image1": "../../assets/projects/6a35647f66aeee87a44358f4_Screenshot-2026-06-19-103910.jpg",
+  "video1": null,
+  "heroEmbed": "https://player.vimeo.com/video/1202866345?app_id=122963",
+  "videoEmbeds": [
+    "https://player.vimeo.com/video/1202866725?app_id=122963",
+    "https://player.vimeo.com/video/1202866966?app_id=122963"
+  ],
+  "image2": "../../assets/projects/6a356482aaad0098995ef52b_Screenshot-2026-06-19-103940.jpg",
+  "image3": "../../assets/projects/6a356485c8be389a809a6d3d_Screenshot-2026-06-19-104029.jpg",
+  "image4": "../../assets/projects/6a35647f66aeee87a44358f4_Screenshot-2026-06-19-103910.jpg",
+  "image5": "../../assets/projects/6a35647b5e6947b0dfc6106c_Screenshot-2026-06-19-103855.jpg",
+  "image6": null,
+  "image7": null,
+  "image8": null,
+  "image9": null,
+  "image10": null,
+  "overview": "As AI becomes a core part of business operations, organizations are facing a new challenge: the infrastructure built to train AI models isn't optimized to run them at scale.\n\nAs a result, companies are seeing increased power consumption, rising operating costs, and growing pressure on data center resources.\n\nQualcomm Dragonfly was built to address this challenge. Purpose-designed for AI inference, Dragonfly helps organizations deliver high-performance AI while improving efficiency, reducing power demands, and scaling more cost-effectively.",
+  "approach": "We wrote script after script, trying to convey the grand scale of AI and the importance of inference, until we changed the narrative. We broke down AI processing to its smallest form. One person triggering cascading agents. That spreads across the globe until it becomes a swarm. We wanted to tell the story of this swarm and how Dragonfly through its Qualcomm legacy is uniquely positioned to handle it.\n\nWe built, rendered, and edited everything in-house with a small, very talented team who hadn't built anything at this scale before. I quickly turned out little team into an internal VFX house, quickly creating workflows to power efficiency and ability. It was many long nights, but we nailed it.",
+  "outcome": "Qualcomm successfully launched their new brand. And our capabilities became known throughout Qualcomm. More work came in quickly, scaling our agency."
+}

@@ -1,0 +1,127 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import { renderMarkdoc } from '../../lib/markdoc';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const { project } = Astro.props;
+const d = project.data;
+
+const details = [
+  ['Client', d.client],
+  ['Role', d.role],
+  ['Category', d.category],
+  ['Year', d.year],
+].filter(([, v]) => v);
+
+const sections = [
+  ['Overview', renderMarkdoc(d.overview)],
+  ['Approach', renderMarkdoc(d.approach)],
+  ['Outcome', renderMarkdoc(d.outcome)],
+].filter(([, html]) => html);
+
+const gallery = [d.image2, d.image3, d.image4, d.image5, d.image6, d.image7, d.image8, d.image9, d.image10].filter(
+  (i) => i != null
+);
+---
+
+<Base title={`${d.title} – Nick Kidd`} description={d.summary}>
+  <section class="single-project-section">
+    <div class="w-layout-blockcontainer main-container w-container">
+      <div class="div-block-42">
+        <div class="div-block-49">
+          <img src="/assets/6711338183204ff65e11a137_arrow-black.svg" loading="lazy" alt="" class="image-16" />
+          <a href="/work" class="text-block-18">ALL PROJECTS</a>
+        </div>
+        <h2 class="single-proj-header">{d.title}</h2>
+        <p class="paragraph-14">{d.summary}</p>
+      </div>
+      <div class="div-block-43">
+        {details.map(([label, value]) => (
+          <div class="projectdetails">
+            <h1 class="projdescriptionhead">{label}</h1>
+            <div class="text-block-17">{value}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="div-block-48">
+    {/* hero rule: video1 wins the hero slot; otherwise image1 */}
+    {
+      d.video1 ? (
+        <video
+          class="project-img"
+          autoplay
+          loop
+          muted
+          playsinline
+          data-lazy-video
+          aria-label={`${d.title} hero video`}
+        >
+          <source data-src={d.video1} type="video/mp4" />
+        </video>
+      ) : d.image1 ? (
+        <Image src={d.image1} alt={d.title} class="project-img" widths={[800, 1280, 1920]} sizes="100vw" />
+      ) : null
+    }
+    {
+      d.heroEmbed && (
+        <div style="padding-top:56.25%" class="video-6 w-video w-embed">
+          <VideoEmbed url={d.heroEmbed} />
+        </div>
+      )
+    }
+  </div>
+
+  <section class="single-content-section">
+    {sections.length > 0 && (
+      <div class="w-layout-blockcontainer container-12 w-container">
+        {sections.map(([label, html]) => (
+          <>
+            <h1 class="projdescriptionhead">{label}</h1>
+            <div class="project-body w-richtext" set:html={html} />
+          </>
+        ))}
+      </div>
+    )}
+
+    {d.videoEmbeds.map((url) => (
+      <div class="videowrapper">
+        <div style="padding-top:56.25%" class="video-2 w-video w-embed">
+          <VideoEmbed url={url} />
+        </div>
+      </div>
+    ))}
+
+    {gallery.length > 0 && (
+      <div class="w-layout-blockcontainer container-13 w-container">
+        {gallery.map((img, i) => (
+          <Image
+            src={img!}
+            alt={`${d.title} — image ${i + 2}`}
+            class={`image-${19 + i}`}
+            widths={[800, 1280, 1920]}
+            sizes="(max-width: 767px) 100vw, 90vw"
+            loading="lazy"
+          />
+        ))}
+      </div>
+    )}
+
+    <a href="/work" class="menu-item w-inline-block">
+      <div class="bottomcta">More work</div>
+      <div class="menu-line"></div>
+    </a>
+  </section>
+</Base>
