@@ -1,0 +1,50 @@
+---
+// NICK/KIDD hero — two responsive variants as in the source (container-7 and largehero),
+// Spline scene lazy-loaded by app.js, background video lazy (poster first, sources attached on idle).
+const SPLINE_URL = 'https://prod.spline.design/gPRWbBQLmX9stmVH/scene.splinecode';
+const POSTER = '/assets/hero-loop-poster.jpg';
+---
+
+<section class="section relative">
+  <div class="w-layout-blockcontainer container-7 w-container">
+    <div class="div-block-12">
+      <div class="spline-scene-10" data-spline-url={SPLINE_URL}>
+        <canvas></canvas>
+      </div>
+      <h1 class="herotext" data-hero-fade>NICK</h1>
+      <h1 class="heading-24" data-hero-fade>KIDD</h1>
+    </div>
+    <div class="hero-image-2">
+      <div class="background-video-2 w-background-video w-background-video-atom">
+        <video
+          autoplay
+          loop
+          muted
+          playsinline
+          poster={POSTER}
+          style={`background-image:url("${POSTER}")`}
+          data-object-fit="cover"
+          data-lazy-video
+          aria-hidden="true"
+        >
+          <source data-src="/assets/hero-loop.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </div>
+  <div class="w-layout-blockcontainer largehero w-container">
+    <div class="div-block-12">
+      <div class="spline-scene-10" data-spline-url={SPLINE_URL} data-hero-scale>
+        <canvas></canvas>
+      </div>
+      <h1 class="herotext" data-hero-rise>NICK</h1>
+      <div class="div-block-62">
+        <div class="div-block-51">
+          <h4 class="heading-22" data-hero-fade>Creative Director</h4>
+          <h4 class="heading-22" data-hero-fade>Storyteller</h4>
+        </div>
+        <h1 class="herotext _2" data-hero-rise>KIDD</h1>
+      </div>
+    </div>
+  </div>
+</section>

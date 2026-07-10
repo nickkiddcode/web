@@ -1,0 +1,17 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# environment — never commit secrets
+.env
+.env.*
+
+# crawled source mirror (200MB reference copy, not part of the site)
+_source/
+
+# os
+.DS_Store
+Thumbs.db

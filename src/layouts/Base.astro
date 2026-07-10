@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import FooterCta from '../components/FooterCta.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  bodyClass?: string;
+  /** the "Made it this far?" footer is part of every page except where a page renders its own */
+  footer?: boolean;
+}
+const { title, description, bodyClass = 'body', footer = true } = Astro.props;
+const og = '/assets/66fb86c7ab99708cc5fa2d08_sitecard.png';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <meta property="og:image" content={new URL(og, Astro.site)} />
+    <meta name="twitter:image" content={new URL(og, Astro.site)} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="/assets/6661e597af31c8694ab6276f_32.png" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/assets/6661e5a0af31c8694ab62e06_665f43a979bbd64b9828e072_nkpurple.png" />
+
+    <!-- Adobe Fonts kit (route A — CDN embed, no secrets) -->
+    <script src="https://use.typekit.net/rrl8joh.js" type="text/javascript" is:inline></script>
+    <script type="text/javascript" is:inline>
+      try { Typekit.load(); } catch (e) {}
+    </script>
+
+    <!-- Work Sans (only family the CSS uses from Google) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Google tag (gtag.js) — carried over from the Webflow site -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBBYJF5QB0" is:inline></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XBBYJF5QB0');
+    </script>
+
+    <!-- Microsoft Clarity — carried over -->
+    <script type="text/javascript" is:inline>
+      (function(c,l,a,r,i,t,y){ c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "ohbj2riiqo");
+    </script>
+
+    <!-- Apollo tracker — carried over -->
+    <script is:inline>
+      function initApollo(){var n=Math.random().toString(36).substring(7),o=document.createElement("script");
+      o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,
+      o.onload=function(){window.trackingFunctions.onLoad({appId:"67097a11a6da3f03f2b45957"})},
+      document.head.appendChild(o)}initApollo();
+    </script>
+    <script src="/assets/clarity-custom.js" type="text/javascript" is:inline></script>
+  </head>
+  <body class={bodyClass}>
+    <Nav />
+    <slot />
+    {footer && <FooterCta />}
+    <script>
+      import '../scripts/app.js';
+    </script>
+  </body>
+</html>

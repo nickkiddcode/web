@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Cursor from '../components/home/Cursor.astro';
+import Loader from '../components/home/Loader.astro';
+import Hero from '../components/home/Hero.astro';
+import QuoteIntro from '../components/home/QuoteIntro.astro';
+import RecentProjects from '../components/home/RecentProjects.astro';
+import AboutSection from '../components/home/AboutSection.astro';
+import FooterCta from '../components/FooterCta.astro';
+import BottomShowcase from '../components/home/BottomShowcase.astro';
+---
+
+<Base title="Nick Kidd Wonder Director" footer={false}>
+  <Cursor />
+  <Loader />
+  <Hero />
+  <QuoteIntro />
+  <RecentProjects />
+  <AboutSection />
+  {/* source order: contact footer sits between the about section and the dark showcase */}
+  <FooterCta />
+  <BottomShowcase />
+</Base>

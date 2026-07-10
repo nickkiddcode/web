@@ -1,0 +1,24 @@
+---
+// "Made it this far?" footer — identical across all crawled pages.
+// The mailto href is assembled client-side (light obfuscation, per the no-contact-form rule).
+---
+
+<div class="footer">
+  <div class="w-layout-blockcontainer main-container w-container">
+    <div class="div-block-55">
+      <h1 class="heading-31">Made it this far? <br />Let&#x27;s chat.</h1>
+    </div>
+    <div class="div-block-54">
+      <a href="#" class="text-block-21" data-eml="contact" data-dmn="nickkidd.net">contact<span aria-hidden="true">&#64;</span>nickkidd.net</a>
+      <div class="text-block-33">|</div>
+      <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener" class="text-block-21">LinkedIn</a>
+    </div>
+  </div>
+  <div class="div-block-56"></div>
+</div>
+
+<script>
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('a[data-eml]')) {
+    a.href = `mailto:${a.dataset.eml}@${a.dataset.dmn}`;
+  }
+</script>

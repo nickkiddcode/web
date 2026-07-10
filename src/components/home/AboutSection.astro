@@ -1,0 +1,80 @@
+---
+// main-content-section: "about me" intro, the interactive bento (accordion),
+// the "No kiddin'" awards block, and the journal blog teaser.
+// The accordion bento (kanban, Kidd Effect, science cards, KERNING, mosaic,
+// marquees) is rebuilt in the About-modules step — placeholder marked below.
+import home from '../../data/home.json';
+const arrowLong = '/assets/664d74693ec11ce992b65f5e_arrow-long.png';
+---
+
+<section class="main-content-section">
+  <div class="aboutme">
+    <div class="div-block-53">
+      <h1 class="eyebrow">about me</h1>
+      <h1 class="heading-33">Design-driven. People-focused. Story-led.</h1>
+    </div>
+    <p class="paragraph-10">
+      Beginning my career as a studio artist, I&#x27;m a Creative Director with 12+ years building brands, campaigns,
+      and digital experiences for companies that want to make an impact.<br />
+      <br />From strategy to execution, I help teams turn ideas into work that moves people.
+    </p>
+  </div>
+
+  <!-- TODO(task 6): interactive bento — accordion with Creative Operations kanban, Kidd Effect,
+       tool marquees, behavioral-science cards, KERNING interaction, photo mosaic -->
+
+  <div class="innocation">
+    <div class="innovation-grid">
+      <img
+        src="/assets/664e7ad15ac85bd9a02514b6_42731592582_699bc72265_o.jpg"
+        loading="lazy"
+        sizes="100vw"
+        alt="Nick Kidd accepting an award"
+        class="innovation-img"
+      />
+      <div class="innovation-text-div">
+        <div class="innovation-text-grid">
+          <h4 class="innovation-heading">No kiddin&#x27;<br /></h4>
+          <div>
+            <div class="award"><strong>Gold MarCom Award </strong> - 2024</div>
+            <div class="award"><strong>32 Under 32</strong> - 2019</div>
+            <div class="award"><strong>Gold National Addy</strong> - 2018</div>
+            <div class="award"><strong>2 Silver National Addys</strong> - 2018</div>
+            <div class="award"><strong>Silver Graphis Design Annual</strong> - 2018</div>
+            <div class="award"><strong>Featured in Ads of the World</strong> </div>
+            <div class="award"><strong>Silver Graphis</strong> - 2018</div>
+            <div class="award"><strong>Lürzer&#x27;s Archive&#x27;s 200 Best Illustrators</strong></div>
+            <div class="award"><strong>Gold DSVC Award</strong> - 2018</div>
+            <div class="award">And a few more...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="journal">
+    <div class="blog-wrapper w-dyn-list">
+      <div role="list" class="blog-list w-dyn-items">
+        {home.blog.map((b) => (
+          <div role="listitem" class="blog-item w-dyn-item" data-reveal>
+            <div class="blog-item-grid">
+              <a href={b.href} class="blog-img-link w-inline-block">
+                {b.image?.src && (
+                  <img src={b.image.src} srcset={b.image.srcset} sizes="100vw" loading="lazy" alt="" class="blog-img" />
+                )}
+              </a>
+              <div class="blog-text">
+                <a href={b.href} class="blog-title-link w-inline-block">
+                  <h4 class="blog-title">{b.title}</h4>
+                </a>
+                <a href={b.href} class="blog-arrow-link w-inline-block" aria-label={b.title}>
+                  <img src={arrowLong} loading="lazy" alt="" class="blog-arrow" />
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,68 @@
+---
+// Dark projects-section at the very bottom: three typographic showcase rows
+// + "THAT'S JUST A TASTE" send-off. Mirrors the source DOM (the image links
+// are empty click targets in the published site too).
+import home from '../../data/home.json';
+const [one, two, three] = home.showcase;
+---
+
+<section class="projects-section">
+  <div class="w-layout-blockcontainer main-container w-container">
+    <div class="projects-one-wrapper w-dyn-list">
+      <div role="list" class="project-one-list w-dyn-items">
+        <div role="listitem" class="project-one-item w-dyn-item">
+          <h4 class="projects-title">{one.title}</h4>
+          <div class="project-one-grid">
+            <a href={one.href} class="project-one-image-link w-inline-block" aria-label={one.title}></a>
+            <div class="div-block-4"></div>
+            <div class="div-block-5"></div>
+            <div class="project-one-text">
+              <div class="project-one-category">{one.category}</div>
+              <a href={one.href} class="portfolio-button w-button">case study</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="project-two-wrapper w-dyn-list">
+      <div role="list" class="project-two-list w-dyn-items">
+        <div role="listitem" class="project-two-item w-dyn-item">
+          <div class="project-two-grid">
+            <div class="empty-div"></div>
+            <div class="project-two-mid-div">
+              <h4 class="projects-title">{two.title}</h4>
+              <a href={two.href} class="project-one-image-link w-inline-block" aria-label={two.title}></a>
+              <div class="project-two-text">
+                <div class="project-one-category">{two.category}</div>
+                <a href={two.href} class="portfolio-button w-button">case study</a>
+              </div>
+            </div>
+            <div class="empty-div"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="project-three-wrapper w-dyn-list">
+      <div role="list" class="project-three-list w-dyn-items">
+        <div role="listitem" class="project-three-item w-dyn-item">
+          <div class="project-three-grid">
+            <div class="empty-div"></div>
+            <div class="empty-div"></div>
+            <div class="project-two-mid-div">
+              <h4 class="projects-title">{three.title}</h4>
+              <a href={three.href} class="project-one-image-link w-inline-block" aria-label={three.title}></a>
+              <div class="project-two-text">
+                <div class="project-one-category">{three.category}</div>
+                <a href={three.href} class="portfolio-button w-button">case study</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="div-block-3">
+      <h1 class="heading-20">THAT&#x27;S JUST A TASTE</h1>
+      <a href="/work" class="trasnparent-button w-button">See more work</a>
+    </div>
+  </div>
+</section>

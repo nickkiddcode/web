@@ -1,0 +1,29 @@
+---
+const { pathname } = Astro.url;
+const links = [
+  { href: '/work', label: 'WORK' },
+  { href: '/about', label: 'ABOUT' },
+  { href: 'https://brand-storyteller-ai-38203086.base44.app', label: 'FREE INSIGHTS', external: true },
+];
+---
+
+<div id="home" class="header">
+  <div class="inner-header">
+    <a href="/" aria-current={pathname === '/' ? 'page' : undefined} class:list={['logo', 'w-nav-brand', pathname === '/' && 'w--current']}>
+      <img src="/assets/665f43a979bbd64b9828e072_nkpurple.png" loading="lazy" alt="Nick Kidd logo" class="logo-image" />
+    </a>
+    <div class="container-14">
+      {links.map((l) => (
+        <a
+          href={l.href}
+          class="nav-button w-inline-block"
+          target={l.external ? '_blank' : undefined}
+          rel={l.external ? 'noopener' : undefined}
+        >
+          <div class="navtext">{l.label}</div>
+          <div class="button-line"></div>
+        </a>
+      ))}
+    </div>
+  </div>
+</div>

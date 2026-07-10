@@ -1,0 +1,38 @@
+/*
+ * Tailwind v4 without preflight: the ported Webflow stylesheet (site.css)
+ * carries its own normalize, and doubling resets would shift the faithful layout.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@import './site.css';
+
+/* Design tokens extracted from the crawled site (see :root in site.css for the source set) */
+@theme {
+  --color-purple: #6100b9;
+  --color-ink: #1c1c1d;
+  --color-offwhite: #f2f0ef;
+  --color-page: #eff1f3;
+  --color-line: #dee0e2;
+  --color-grey: #ebebeb;
+
+  --font-display: 'loos-extended', sans-serif;
+  --font-display-wide: 'loos-extrawide', sans-serif;
+  --font-body: 'Work Sans', sans-serif;
+  --font-heading: 'Zalandosansexpanded Variablefont Wght', Arial, sans-serif;
+}
+
+/* Motion-safety: the GSAP layer checks this too, but hard-disable CSS loops for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    display: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(curl -sL https://www.nickkidd.net/ -o _source/index.html)",
+      "Bash(curl -sL https://www.nickkidd.net/robots.txt)",
+      "Bash(node _source/crawl.mjs)",
+      "Bash(grep -oh '\"families\":\\\\[[^]]*\\\\]\\\\|WebFont[^<]\\\\{0,120\\\\}' _source/index.html)",
+      "Bash(curl -sL \"https://use.typekit.net/rrl8joh.js\" -o _source/cdn/use.typekit.net/rrl8joh.js --create-dirs)",
+      "Bash(node -e ' *)",
+      "Bash(grep -oh 'Kidd Effect\\\\|Fitts[^<]*\\\\|K-E-R-N-I-N-G\\\\|KERNING\\\\|[Kk]anban[^<]\\\\{0,30\\\\}\\\\|Cognitive Load[^<]*' _source/index.html)",
+      "Bash(grep -oh 'KERN[^<]*\\\\|Creative Operations[^<]\\\\{0,40\\\\}\\\\|kern-[a-z]*\\\\|marquee[a-z-]*\\\\|mosaic[a-z-]*\\\\|In Progress\\\\|Done\\\\b' _source/index.html)",
+      "Bash(git init *)",
+      "Bash(npm install *)",
+      "Bash(grep -oh '#[0-9a-fA-F]\\\\{3,8\\\\}\\\\b' _source/cdn/cdn.prod.website-files.com/664d74693ec11ce992b65e9b/css/nicks-groovy-site-95908b.webflow.shared.f8dca45d6.css)",
+      "Bash(node _source/tokens.mjs body .hero-heading .heading-31 .single-proj-header .paragraph .navtext .eyebrow .projects-title-page .text-block-21 .projdescriptionhead)",
+      "Bash(awk '/^\\(body|h1|h2|h3|h4|p\\) \\\\{|^\\\\.\\(hero-heading|heading-31|paragraph|navtext|eyebrow|projects-title-page|single-proj-header|projdescriptionhead|text-block-21\\) \\\\{/{f=1} f{print} f&&/\\\\}/{f=0;print \"\"}' _source/cdn/cdn.prod.website-files.com/664d74693ec11ce992b65e9b/css/nicks-groovy-site-95908b.webflow.shared.f8dca45d6.css)",
+      "Bash(awk '/^:root/{f=1} f{print} f&&/\\\\}/{exit}' _source/cdn/cdn.prod.website-files.com/664d74693ec11ce992b65e9b/css/nicks-groovy-site-95908b.webflow.shared.f8dca45d6.css)"
+    ]
+  }
+}
