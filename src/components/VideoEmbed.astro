@@ -28,6 +28,7 @@ const vimeoSrc = vimeo ? `https://player.vimeo.com/video/${vimeo[1]}?dnt=1` : nu
         data-yt-id={ytId}
         type="button"
         aria-label="Play video"
+        data-maxres-src={`https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`}
         style={`background-image:url(https://i.ytimg.com/vi/${ytId}/hqdefault.jpg)`}
       >
         <span class="yt-facade-play" aria-hidden="true">
@@ -88,6 +89,22 @@ const vimeoSrc = vimeo ? `https://player.vimeo.com/video/${vimeo[1]}?dnt=1` : nu
 </style>
 
 <script>
+  // The hero renders at full page width, so the standard hqdefault thumbnail
+  // (480x360) visibly pixelates when stretched. Opportunistically upgrade to
+  // maxresdefault (1280x720) — not every video has one, and YouTube returns a
+  // fake 120x90 placeholder instead of a 404 when it's missing, so we detect
+  // that by checking the loaded image's real width rather than trusting a
+  // successful load.
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('.yt-facade[data-maxres-src]')) {
+    const probe = new Image();
+    probe.onload = () => {
+      if (probe.naturalWidth > 120) {
+        btn.style.backgroundImage = `url(${btn.dataset.maxresSrc})`;
+      }
+    };
+    probe.src = btn.dataset.maxresSrc!;
+  }
+
   document.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.yt-facade');
     if (!btn) return;

@@ -72,7 +72,7 @@ const related = [...new Set([...sameCategory, ...nextInOrder])].filter((p) => p.
   </section>
 
   <div class="div-block-48">
-    {/* hero rule: video1 wins the hero slot; otherwise image1 */}
+    {/* hero rule: video1 (raw upload) wins, then heroEmbed (YouTube/Vimeo link), then image1 */}
     {
       d.video1 ? (
         <video
@@ -86,16 +86,11 @@ const related = [...new Set([...sameCategory, ...nextInOrder])].filter((p) => p.
         >
           <source data-src={d.video1} type="video/mp4" />
         </video>
+      ) : d.heroEmbed ? (
+        <VideoEmbed url={d.heroEmbed} />
       ) : d.image1 ? (
         <Image src={d.image1} alt={d.title} class="project-img" widths={[800, 1280, 1920]} sizes="100vw" />
       ) : null
-    }
-    {
-      d.heroEmbed && (
-        <div class="w-full">
-          <VideoEmbed url={d.heroEmbed} />
-        </div>
-      )
     }
   </div>
 
