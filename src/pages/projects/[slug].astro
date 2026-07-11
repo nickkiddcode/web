@@ -32,6 +32,13 @@ const sections = [
 const gallery = [d.image2, d.image3, d.image4, d.image5, d.image6, d.image7, d.image8, d.image9, d.image10].filter(
   (i) => i != null
 );
+
+// related projects: same category first, then next-in-order (wrapping), 3 total
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const idx = all.findIndex((p) => p.id === project.id);
+const sameCategory = all.filter((p) => p.id !== project.id && p.data.category === d.category);
+const nextInOrder = [...all.slice(idx + 1), ...all.slice(0, idx)];
+const related = [...new Set([...sameCategory, ...nextInOrder])].filter((p) => p.id !== project.id).slice(0, 3);
 ---
 
 <Base title={`${d.title} – Nick Kidd`} description={d.summary}>
@@ -39,8 +46,16 @@ const gallery = [d.image2, d.image3, d.image4, d.image5, d.image6, d.image7, d.i
     <div class="w-layout-blockcontainer main-container w-container">
       <div class="div-block-42">
         <div class="div-block-49">
-          <img src="/assets/6711338183204ff65e11a137_arrow-black.svg" loading="lazy" alt="" class="image-16" />
-          <a href="/work" class="text-block-18">ALL PROJECTS</a>
+          <a href="/work" class="text-block-18 inline-flex items-center gap-2">
+            <img
+              src="/assets/6711338183204ff65e11a137_arrow-black.svg"
+              alt=""
+              width="15"
+              height="13"
+              class="h-[13px] w-auto shrink-0 rotate-180"
+            />
+            ALL PROJECTS
+          </a>
         </div>
         <h2 class="single-proj-header">{d.title}</h2>
         <p class="paragraph-14">{d.summary}</p>
@@ -119,9 +134,48 @@ const gallery = [d.image2, d.image3, d.image4, d.image5, d.image6, d.image7, d.i
       </div>
     )}
 
-    <a href="/work" class="menu-item w-inline-block">
-      <div class="bottomcta">More work</div>
-      <div class="menu-line"></div>
-    </a>
+  </section>
+
+  {/* related projects: same category first, padded with the next in order */}
+  <section class="border-t border-line px-6 py-20" aria-label="More work">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-10 flex flex-wrap items-baseline justify-between gap-4" data-reveal>
+        <h2 class="font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-none text-ink uppercase">More work</h2>
+        <a
+          href="/work"
+          class="group font-body text-[13px] font-semibold tracking-[0.2em] text-ink uppercase hover:text-purple"
+        >
+          All projects <span aria-hidden="true" class="ml-1 inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 gap-9 md:grid-cols-3">
+        {related.map((p) => (
+          <a href={`/projects/${p.id}`} class="group block" data-reveal>
+            {p.data.image1 && (
+              <Image
+                src={p.data.image1}
+                alt={p.data.title}
+                widths={[600, 900]}
+                sizes="(max-width: 767px) 100vw, 33vw"
+                loading="lazy"
+                class="aspect-video w-full object-cover"
+              />
+            )}
+            <p class="mt-4 font-body text-[12px] tracking-[0.2em] text-ink/50 uppercase">
+              {p.data.category}
+              {p.data.year && (
+                <>
+                  <span aria-hidden="true" class="mx-2 text-ink/30">|</span>
+                  {p.data.year}
+                </>
+              )}
+            </p>
+            <p class="mt-1.5 font-display text-[clamp(1.2rem,2vw,1.6rem)] leading-tight text-ink uppercase group-hover:text-purple">
+              {p.data.title}
+            </p>
+          </a>
+        ))}
+      </div>
+    </div>
   </section>
 </Base>
