@@ -1,9 +1,12 @@
 import { config, collection, singleton, fields } from '@keystatic/core';
 
-// Local mode for now — switches to GitHub mode at the deploy step so Nick can
-// edit from the deployed site (see execution step 8).
+// Local mode on Nick's machine (edits are plain file writes); GitHub mode on the
+// deployed site (edits become commits to nickkiddcode/web → auto-rebuild).
+// The GitHub App credentials live in Cloudflare env vars, never in the repo.
 export default config({
-  storage: { kind: 'local' },
+  storage: import.meta.env.DEV
+    ? { kind: 'local' }
+    : { kind: 'github', repo: 'nickkiddcode/web' },
   ui: {
     brand: { name: 'nickkidd.net' },
   },
