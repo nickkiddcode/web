@@ -143,12 +143,12 @@ const plusSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="10
                 <div class="client-logo-slider">
                   <div class="items">
                     {tools.map(([f, name]) => (
-                      <img loading="eager" src={`${A}/${f}`} alt={`${name} logo`} class="item" />
+                      <img loading="lazy" src={`${A}/${f}`} alt={`${name} logo`} class="item" />
                     ))}
                   </div>
                   <div class="items" aria-hidden="true">
                     {tools.map(([f, name]) => (
-                      <img loading="eager" src={`${A}/${f}`} alt="" class="item" />
+                      <img loading="lazy" src={`${A}/${f}`} alt="" class="item" />
                     ))}
                   </div>
                 </div>
@@ -262,7 +262,7 @@ const plusSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="10
         </div>
         <div class="builder_feature-bottom feature-10">
           <a href="https://funny-skiff-43e.notion.site/Nick-s-Design-Resources-1212b623f8d4806e8d9ed8b167f03c0b?pvs=4" target="_blank" rel="noopener" class="div-block-32 w-inline-block">
-            <img loading="eager" src={`${A}/670d823d0334f3320bbd76c5_notion.png`} alt="Notion logo" class="notion" />
+            <img loading="lazy" src={`${A}/670d823d0334f3320bbd76c5_notion.png`} alt="Notion logo" class="notion" />
             <div class="text-block-9">Nick&#x27;s Notion</div>
           </a>
         </div>
