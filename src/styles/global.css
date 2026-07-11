@@ -2,11 +2,14 @@
  * Tailwind v4 without preflight: the ported Webflow stylesheet (site.css)
  * carries its own normalize, and doubling resets would shift the faithful layout.
  */
-@layer theme, base, components, utilities;
+@layer theme, base, site, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
-@import './site.css';
+/* Ported Webflow styles live in their own layer so Phase 2 code (Tailwind
+   utilities, component styles) can override them; faithful pages only use
+   site.css classes, so their rendering is unchanged. */
+@import './site.css' layer(site);
 
 /* Design tokens extracted from the crawled site (see :root in site.css for the source set) */
 @theme {
@@ -18,7 +21,7 @@
   --color-grey: #ebebeb;
 
   --font-display: 'loos-extended', sans-serif;
-  --font-display-wide: 'loos-extrawide', sans-serif;
+  --font-hero: 'loos-extrawide', sans-serif;
   --font-body: 'Work Sans', sans-serif;
   --font-heading: 'Zalandosansexpanded Variablefont Wght', Arial, sans-serif;
 }

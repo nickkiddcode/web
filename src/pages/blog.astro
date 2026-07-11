@@ -1,0 +1,139 @@
+---
+// Phase 2 blog index — "No kiddin'" as an editorial masthead: lead story +
+// typographic index rows, category filters, all on the shared design system.
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+
+const posts = (await getCollection('blog')).sort((a, b) => +b.data.date - +a.data.date);
+const [lead, ...rest] = posts;
+const categories = [...new Set(posts.map((p) => p.data.category).filter(Boolean))];
+
+const fmt = (date: Date) =>
+  date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).toUpperCase();
+
+// excerpt: first paragraph of the markdoc body, stripped to plain words
+function excerpt(body: string | undefined, words = 32) {
+  const para = (body ?? '')
+    .split(/\n\s*\n/)
+    .map((b) => b.trim())
+    .find((b) => b && !b.startsWith('#') && !b.startsWith('>'));
+  if (!para) return '';
+  const plain = para.replace(/[*_>#\[\]]|\(([^)]*)\)/g, '').replace(/\s+/g, ' ').trim();
+  const w = plain.split(' ');
+  return w.slice(0, words).join(' ') + (w.length > words ? '…' : '');
+}
+---
+
+<Base title="No kiddin' – Nick Kidd">
+  <section class="px-6 pt-36 pb-24">
+    <header class="mx-auto max-w-6xl" data-reveal>
+      <h1 class="font-hero text-[clamp(3rem,11vw,10rem)] leading-[0.95] text-ink uppercase">
+        No kiddin&#x27;
+      </h1>
+      <p class="mt-5 font-body text-[13px] font-medium tracking-[0.25em] text-ink/60 uppercase">
+        Notes on creativity, leadership, and craft
+      </p>
+
+      {
+        categories.length > 1 && (
+          <div class="mt-10 flex flex-wrap gap-x-7 gap-y-3 border-t border-line pt-6" role="group" aria-label="Filter by category">
+            <button
+              class="blog-filter appearance-none bg-transparent p-0 border-x-0 border-t-0 border-b border-solid font-body text-[12px] font-medium tracking-[0.2em] uppercase text-ink cursor-pointer border-purple pb-0.5"
+              data-filter="all"
+              aria-pressed="true"
+            >
+              All
+            </button>
+            {categories.map((c) => (
+              <button
+                class="blog-filter appearance-none bg-transparent p-0 border-x-0 border-t-0 border-b border-solid font-body text-[12px] font-medium tracking-[0.2em] uppercase text-ink/50 cursor-pointer border-transparent pb-0.5 hover:text-ink"
+                data-filter={c}
+                aria-pressed="false"
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    {
+      lead && (
+        <a
+          href={`/blog-posts/${lead.id}`}
+          class="blog-entry group mx-auto mt-16 grid max-w-6xl grid-cols-1 items-center gap-10 md:grid-cols-2"
+          data-category={lead.data.category}
+          data-reveal
+        >
+          {lead.data.mainImage && (
+            <Image
+              src={lead.data.mainImage}
+              alt=""
+              widths={[800, 1280]}
+              sizes="(max-width: 767px) 100vw, 50vw"
+              class="aspect-video w-full object-cover"
+            />
+          )}
+          <div>
+            <p class="mb-4 font-body text-[13px] font-medium tracking-[0.25em] uppercase">
+              <span class="text-purple">{lead.data.category}</span>
+              <span aria-hidden="true" class="mx-3 text-ink/30">•</span>
+              <span class="text-ink/60">{fmt(lead.data.date)}</span>
+            </p>
+            <h2 class="font-display text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.05] text-ink uppercase group-hover:text-purple">
+              {lead.data.title}
+            </h2>
+            <p class="mt-5 max-w-[52ch] font-body text-[17px] leading-[1.6] text-ink/75">{excerpt(lead.body)}</p>
+            <p class="mt-6 inline-flex items-center gap-2 font-body text-[13px] font-semibold tracking-[0.2em] text-ink uppercase">
+              Read
+              <span class="transition-transform duration-300 group-hover:translate-x-1.5" aria-hidden="true">→</span>
+            </p>
+          </div>
+        </a>
+      )
+    }
+
+    <div class="mx-auto mt-20 max-w-6xl border-t border-line">
+      {rest.map((p) => (
+        <a
+          href={`/blog-posts/${p.id}`}
+          class="blog-entry group grid grid-cols-1 gap-2 border-b border-line py-9 md:grid-cols-[9rem_1fr_auto] md:items-baseline md:gap-8"
+          data-category={p.data.category}
+          data-reveal
+        >
+          <span class="font-body text-[12px] tracking-[0.18em] text-ink/50 uppercase">{fmt(p.data.date)}</span>
+          <span class="font-display text-[clamp(1.4rem,2.6vw,2.1rem)] leading-[1.08] text-ink uppercase transition-transform duration-300 group-hover:translate-x-2 group-hover:text-purple">
+            {p.data.title}
+          </span>
+          <span class="font-body text-[12px] tracking-[0.18em] text-ink/50 uppercase md:justify-self-end">
+            {p.data.category} <span aria-hidden="true" class="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  // category filter — plain DOM, no dependencies
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.blog-filter');
+  const entries = document.querySelectorAll<HTMLElement>('.blog-entry');
+  for (const btn of buttons) {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      for (const b of buttons) {
+        const active = b === btn;
+        b.setAttribute('aria-pressed', String(active));
+        b.classList.toggle('border-purple', active);
+        b.classList.toggle('border-transparent', !active);
+        b.classList.toggle('text-ink/50', !active);
+        b.classList.toggle('text-ink', active);
+      }
+      for (const e of entries) {
+        e.style.display = f === 'all' || e.dataset.category === f ? '' : 'none';
+      }
+    });
+  }
+</script>

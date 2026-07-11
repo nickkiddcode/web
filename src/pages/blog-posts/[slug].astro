@@ -1,4 +1,6 @@
 ---
+// Phase 2 blog post template — editorial reading layout on the shared design
+// system (Loos display / Work Sans body / purple as punctuation).
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
@@ -16,64 +18,148 @@ const { post } = Astro.props;
 const d = post.data;
 const { Content } = await render(post);
 
-const displayDate = d.date.toLocaleDateString('en-US', {
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-const lightbox = [d.image1, d.image2].filter((i) => i != null);
+const displayDate = d.date
+  .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+  .toUpperCase();
+
+// chronological neighbors for the footer
+const all = (await getCollection('blog')).sort((a, b) => +b.data.date - +a.data.date);
+const i = all.findIndex((p) => p.id === post.id);
+const newer = i > 0 ? all[i - 1] : null;
+const older = i < all.length - 1 ? all[i + 1] : null;
+
+const lightbox = [d.image1, d.image2].filter((img) => img != null);
 ---
 
 <Base title={`${d.title} – Nick Kidd`}>
-  <section class="single-blog-section">
-    <div class="w-layout-blockcontainer main-container w-container">
-      <div class="single-post-top">
-        <h2 class="single-post-title">{d.title}</h2>
-        <div class="single-post-top-meta">
-          <div class="meta-div-boc">
-            <div>DATE</div>
-            <div>{displayDate}</div>
-          </div>
-          <div class="meta-div-boc meta-div-last">
-            <div>CATEGORY</div>
-            <div>{d.category}</div>
-          </div>
-        </div>
-        <div class="div-block"></div>
-      </div>
-      <div class="div-block-25">
-        {/* same conditional the Webflow template used: video wins the slot when set */}
-        {
-          d.mainVideo ? (
-            <video class="blog-img" autoplay loop muted playsinline data-lazy-video aria-label={`${d.title} video`}>
+  <article class="post">
+    <header class="mx-auto max-w-4xl px-6 pt-40 pb-10 text-center" data-reveal>
+      <p class="mb-6 font-body text-[13px] font-medium tracking-[0.25em] uppercase">
+        <span class="text-purple">{d.category}</span>
+        <span aria-hidden="true" class="mx-3 text-ink/30">•</span>
+        <span class="text-ink/60">{displayDate}</span>
+      </p>
+      <h1 class="font-display text-[clamp(2.4rem,6vw,4.75rem)] leading-[1.02] font-normal text-ink uppercase">
+        {d.title}
+      </h1>
+    </header>
+
+    {
+      (d.mainVideo || d.mainImage) && (
+        <figure class="mx-auto max-w-5xl px-6" data-reveal>
+          {d.mainVideo ? (
+            <video class="w-full" autoplay loop muted playsinline data-lazy-video aria-label={`${d.title} video`}>
               <source data-src={d.mainVideo} type="video/mp4" />
             </video>
-          ) : d.mainImage ? (
-            <Image src={d.mainImage} alt={d.title} class="blog-img" widths={[800, 1280, 1920]} sizes="100vw" />
-          ) : null
-        }
-      </div>
-      <div class="single-post-content">
-        <div class="blog-body w-richtext">
-          <Content />
-        </div>
-        {lightbox.length > 0 && (
-          <div class="single-post-image-grid">
-            {lightbox.map((img) => (
-              <Image src={img!} alt="" widths={[800, 1280]} sizes="50vw" loading="lazy" />
-            ))}
-          </div>
-        )}
-        <div class="post-author">
-          <img src={author.image} loading="lazy" alt={author.name} />
-          <div class="author-infos">
-            <h4 class="author-name">{author.name}</h4>
-            <div class="author-job">{author.job}</div>
-          </div>
-          <p class="author-description">{author.description}</p>
-        </div>
-      </div>
+          ) : (
+            <Image src={d.mainImage!} alt={d.title} widths={[800, 1280, 1920]} sizes="(max-width: 1280px) 100vw, 1216px" class="w-full" />
+          )}
+        </figure>
+      )
+    }
+
+    <div class="post-body mx-auto max-w-[70ch] px-6 pt-16 pb-4 font-body text-[20px] leading-[1.65] text-ink" data-reveal>
+      <Content />
     </div>
-  </section>
+
+    {
+      lightbox.length > 0 && (
+        <div class="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-6 py-10 md:grid-cols-2" data-reveal>
+          {lightbox.map((img) => (
+            <Image src={img!} alt="" widths={[800, 1280]} sizes="(max-width: 767px) 100vw, 50vw" loading="lazy" class="w-full" />
+          ))}
+        </div>
+      )
+    }
+
+    <footer class="mx-auto max-w-[70ch] px-6 pb-24">
+      <div class="mt-12 flex items-center gap-5 border-t border-line pt-10">
+        <img src={author.image} alt={author.name} class="h-14 w-14 rounded-full object-cover" loading="lazy" />
+        <div>
+          <p class="font-body text-[17px] font-semibold text-ink">{author.name}</p>
+          <p class="font-body text-[14px] tracking-[0.08em] text-ink/55 uppercase">{author.job}</p>
+        </div>
+      </div>
+    </footer>
+
+    {
+      (older || newer) && (
+        <nav class="border-t border-line" aria-label="More posts">
+          <div class="mx-auto grid max-w-6xl grid-cols-1 md:grid-cols-2">
+            {older ? (
+              <a href={`/blog-posts/${older.id}`} class="post-nav group block border-line px-6 py-14 md:border-r">
+                <p class="mb-3 font-body text-[12px] tracking-[0.25em] text-ink/50 uppercase">← Previous</p>
+                <p class="font-display text-[clamp(1.3rem,2.2vw,1.9rem)] leading-tight text-ink uppercase group-hover:text-purple">
+                  {older.data.title}
+                </p>
+              </a>
+            ) : (
+              <div class="hidden md:block" />
+            )}
+            {newer && (
+              <a href={`/blog-posts/${newer.id}`} class="post-nav group block px-6 py-14 md:text-right">
+                <p class="mb-3 font-body text-[12px] tracking-[0.25em] text-ink/50 uppercase">Next →</p>
+                <p class="font-display text-[clamp(1.3rem,2.2vw,1.9rem)] leading-tight text-ink uppercase group-hover:text-purple">
+                  {newer.data.title}
+                </p>
+              </a>
+            )}
+          </div>
+        </nav>
+      )
+    }
+  </article>
 </Base>
+
+<style is:global>
+  /* Markdoc output styling — scoped to the post body */
+  .post-body p {
+    margin-bottom: 1.5em;
+  }
+  .post-body h1,
+  .post-body h2 {
+    font-family: 'loos-extended', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.15rem);
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin: 2.6em 0 0.9em;
+    font-weight: 400;
+  }
+  .post-body h3 {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 2.2em 0 0.8em;
+  }
+  .post-body a {
+    color: #6100b9;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .post-body ul,
+  .post-body ol {
+    margin: 0 0 1.5em;
+    padding-left: 1.4em;
+  }
+  .post-body li {
+    margin-bottom: 0.5em;
+    padding-left: 0.3em;
+  }
+  .post-body ul li::marker {
+    color: #6100b9;
+  }
+  .post-body blockquote {
+    border-left: 3px solid #6100b9;
+    margin: 2.2em 0;
+    padding: 0.4em 0 0.4em 1.4em;
+    font-family: 'loos-extended', sans-serif;
+    font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+    line-height: 1.35;
+  }
+  .post-body blockquote p {
+    margin-bottom: 0;
+  }
+  .post-body strong {
+    font-weight: 600;
+  }
+</style>
