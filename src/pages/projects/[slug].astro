@@ -92,7 +92,7 @@ const related = [...new Set([...sameCategory, ...nextInOrder])].filter((p) => p.
     }
     {
       d.heroEmbed && (
-        <div style="padding-top:56.25%" class="video-6 w-video w-embed">
+        <div class="w-full">
           <VideoEmbed url={d.heroEmbed} />
         </div>
       )
@@ -113,9 +113,7 @@ const related = [...new Set([...sameCategory, ...nextInOrder])].filter((p) => p.
 
     {d.videoEmbeds.map((url) => (
       <div class="videowrapper">
-        <div style="padding-top:56.25%" class="video-2 w-video w-embed">
-          <VideoEmbed url={url} />
-        </div>
+        <VideoEmbed url={url} />
       </div>
     ))}
 

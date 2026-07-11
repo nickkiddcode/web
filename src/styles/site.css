@@ -1693,13 +1693,13 @@ blockquote {
   position: static;
 }
 .videowrapper {
-  aspect-ratio: auto;
-  object-fit: contain;
+  /* max-height:100vh (Webflow original) let a fixed 854x480 iframe letterbox
+     within the wrapper; it instead squashes our responsive aspect-ratio embed
+     box, since flex-shrink compresses height without aspect-ratio compensating
+     when width is separately pinned to 100%. Dropped for the one usage here. */
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  height: auto;
-  max-height: 100vh;
   margin-bottom: 40px;
   display: flex;
   position: relative;
@@ -2697,6 +2697,7 @@ blockquote {
 }
 .div-block-48 {
   display: flex;
+  flex-direction: column;
   position: relative;
 }
 .container-12 {

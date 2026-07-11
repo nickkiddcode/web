@@ -2,6 +2,13 @@
 // Best-practice video embeds (approved: drop Embedly wrappers).
 // YouTube: click-to-load facade — poster from YouTube's own image CDN, iframe
 // only created on click. Vimeo: native lazy iframe.
+//
+// Self-contained aspect-ratio box: the pages that use this component wrap it
+// in Webflow-ported classes (.video-6/.video-2/.w-video) whose ported CSS
+// conflicts with the padding-top aspect-ratio trick (.video-6 sets
+// position:absolute with no offsets, and the child-selector that sizes
+// iframes doesn't match our <button> facade). Establishing our own
+// position/aspect-ratio here sidesteps that cascade fight entirely.
 interface Props {
   url: string;
 }
@@ -13,44 +20,55 @@ const ytId = yt?.[1];
 const vimeoSrc = vimeo ? `https://player.vimeo.com/video/${vimeo[1]}?dnt=1` : null;
 ---
 
-{
-  ytId ? (
-    <button
-      class="yt-facade"
-      data-yt-id={ytId}
-      type="button"
-      aria-label="Play video"
-      style={`background-image:url(https://i.ytimg.com/vi/${ytId}/hqdefault.jpg)`}
-    >
-      <span class="yt-facade-play" aria-hidden="true">
-        <svg viewBox="0 0 68 48" width="68" height="48">
-          <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#f00" />
-          <path d="M45 24 27 14v20" fill="#fff" />
-        </svg>
-      </span>
-    </button>
-  ) : vimeoSrc ? (
-    <iframe
-      src={vimeoSrc}
-      loading="lazy"
-      width="854"
-      height="480"
-      frameborder="0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-      title="Vimeo video"
-    />
-  ) : null
-}
+<div class="embed-box">
+  {
+    ytId ? (
+      <button
+        class="yt-facade"
+        data-yt-id={ytId}
+        type="button"
+        aria-label="Play video"
+        style={`background-image:url(https://i.ytimg.com/vi/${ytId}/hqdefault.jpg)`}
+      >
+        <span class="yt-facade-play" aria-hidden="true">
+          <svg viewBox="0 0 68 48" width="68" height="48">
+            <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#f00" />
+            <path d="M45 24 27 14v20" fill="#fff" />
+          </svg>
+        </span>
+      </button>
+    ) : vimeoSrc ? (
+      <iframe
+        src={vimeoSrc}
+        loading="lazy"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen
+        title="Vimeo video"
+      />
+    ) : null
+  }
+</div>
 
 <style>
-  .yt-facade {
+  .embed-box {
     position: relative;
-    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: #000;
+  }
+  .yt-facade,
+  .embed-box iframe {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    padding: 0;
     border: 0;
+  }
+  .yt-facade {
+    display: block;
+    padding: 0;
     cursor: pointer;
     background-color: #000;
     background-size: cover;
@@ -67,10 +85,6 @@ const vimeoSrc = vimeo ? `https://player.vimeo.com/video/${vimeo[1]}?dnt=1` : nu
   .yt-facade:hover .yt-facade-play {
     opacity: 1;
   }
-  iframe {
-    width: 100%;
-    height: 100%;
-  }
 </style>
 
 <script>
@@ -82,8 +96,7 @@ const vimeoSrc = vimeo ? `https://player.vimeo.com/video/${vimeo[1]}?dnt=1` : nu
     iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
     iframe.allowFullscreen = true;
     iframe.title = 'YouTube video';
-    iframe.style.cssText = 'width:100%;height:100%;border:0;position:absolute;inset:0;';
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
     btn.replaceWith(iframe);
-    iframe.parentElement?.style.setProperty('position', 'relative');
   });
 </script>
