@@ -3,7 +3,7 @@
 // Driven by the Projects collection so Keystatic edits flow through.
 import { getCollection } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
-import spiralVideos from '../../data/spiral-videos.json';
+import cardVideos from '../../data/card-videos.json';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const featured = projects.slice(0, 5);
@@ -21,9 +21,9 @@ const peek = Object.fromEntries(
 
 // the card's own video, separate from `video1` (which drives the project page's
 // hero and may be a curated embed there) — the CMS field wins when set, else the
-// spiral experiment's first clip for that project, if it has one
+// project's card clip (scripts/card-clips.mjs: up to 1280px, sharp at card size), if any
 const cardVideo = (p: (typeof projects)[number]) =>
-  p.data.video1 ?? (spiralVideos as Record<string, { src: string }[]>)[p.id]?.[0]?.src ?? null;
+  p.data.video1 ?? (cardVideos as Record<string, string>)[p.id] ?? null;
 ---
 
 <footer class="projects">
@@ -38,7 +38,7 @@ const cardVideo = (p: (typeof projects)[number]) =>
           <a href={`/projects/${p.id}`} class="link-block-2 w-inline-block" aria-label={p.data.title}></a>
           <div class="div-block-44">
             {cardVideo(p) ? (
-              <video class="image1" src={cardVideo(p)!} autoplay loop muted playsinline aria-hidden="true" />
+              <video class="image1 card-video" src={cardVideo(p)!} autoplay loop muted playsinline aria-hidden="true" />
             ) : (
               p.data.image1 && (
                 <Image src={p.data.image1} alt={`${p.data.title} — ${p.data.category.toLowerCase()} work for ${p.data.client}`} class="image1" widths={[800, 1280, 1920]} sizes="100vw" loading="lazy" />
@@ -136,6 +136,14 @@ const cardVideo = (p: (typeof projects)[number]) =>
     color: #c7cad0;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
   }
+
+  /* a video in the image slot: <video> has no width of its own beyond its file's pixel size,
+     so without this it sat at its native width (smaller than the still beside it) instead of
+     filling its column. The .image1 rules supply the column cap and aspect ratio. */
+  .div-block-44 .card-video { width: 100%; height: auto; object-fit: cover; display: block; }
+  /* and the two media in a feature split the row evenly — left to flex's defaults they
+     shrink in proportion to their file sizes, so a big still came out narrower than its partner */
+  .collection-item-4 .div-block-44 > :is(.image1, .image2) { flex: 1 1 0; min-width: 0; }
 
   /* the text block under each feature: title and category/client used to sit in a
      33%-wide column meant to leave room for a description beside it. That

@@ -6,15 +6,14 @@
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import spiralVideos from '../data/spiral-videos.json';
+import cardVideos from '../data/card-videos.json';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const CATEGORIES = ['Campaign', 'UX', 'AI', 'Design', 'Branding'] as const;
 const counts = Object.fromEntries(CATEGORIES.map((c) => [c, projects.filter((p) => p.data.category === c).length]));
 
-// the hover clip: the CMS video when set, else the spiral experiment's first clip, if any
-const clip = (p: (typeof projects)[number]) =>
-  p.data.video1 ?? (spiralVideos as Record<string, { src: string }[]>)[p.id]?.[0]?.src ?? null;
+// the hover clip: the CMS video when set, else the project's card clip (scripts/card-clips.mjs), if any
+const clip = (p: (typeof projects)[number]) => p.data.video1 ?? (cardVideos as Record<string, string>)[p.id] ?? null;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
