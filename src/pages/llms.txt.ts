@@ -58,8 +58,8 @@ ${work}
 ## Pages
 
 - [Home](${url('/')}): overview, showreel, and featured work
-- [Work](${url('/work')}): every project
-- [About](${url('/about')}): background, experience, beliefs, testimonials, clients, awards
+- [Work](${url('/work/')}): every project
+- [About](${url('/about/')}): background, experience, beliefs, testimonials, clients, awards
 `;
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

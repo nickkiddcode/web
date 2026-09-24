@@ -13,8 +13,8 @@ export const GET: APIRoute = async ({ site }) => {
 
   const pages = [
     { path: '/', priority: '1.0' },
-    { path: '/work', priority: '0.9' },
-    { path: '/about', priority: '0.9' },
+    { path: '/work/', priority: '0.9' },
+    { path: '/about/', priority: '0.9' },
     ...projects.map((p) => ({ path: `/projects/${p.id}`, priority: '0.8' })),
   ];
 
