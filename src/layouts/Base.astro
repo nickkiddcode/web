@@ -9,20 +9,112 @@ interface Props {
   bodyClass?: string;
   /** the "Made it this far?" footer is part of every page except where a page renders its own */
   footer?: boolean;
+  /** keep experiments (and anything password-gated) out of search results */
+  noindex?: boolean;
+  /** absolute or root-relative share image; defaults to the site card */
+  image?: string;
+  /** Open Graph type — 'website' for pages, 'article' for case studies, 'profile' for About */
+  type?: 'website' | 'article' | 'profile';
+  /** page-specific schema.org objects, added to the sitewide Person + WebSite graph */
+  schema?: Record<string, unknown>[];
+  /** show the homepage preloader (components/home/Loader.astro) — decided here, before first paint */
+  preloader?: boolean;
 }
-const { title, description, bodyClass = 'body', footer = true } = Astro.props;
-const og = '/assets/66fb86c7ab99708cc5fa2d08_sitecard.jpg';
+
+// The one description of Nick every page falls back to — written for the people and the
+// recruiter / AI agents who land here: role, years, the brands, where he works.
+const DEFAULT_DESCRIPTION =
+  'Nick Kidd is a Dallas–Fort Worth creative director with 12+ years leading award-winning campaigns, brands, and digital experiences for Qualcomm, Audi, Samsung, T-Mobile, and Fluence.';
+
+const {
+  title,
+  description = DEFAULT_DESCRIPTION,
+  bodyClass = 'body',
+  footer = true,
+  noindex = false,
+  image = '/assets/66fb86c7ab99708cc5fa2d08_sitecard.jpg',
+  type = 'website',
+  schema = [],
+  preloader = false,
+} = Astro.props;
+
+const site = Astro.site!;
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(image, site).href;
+
+// Who Nick is, as structured data: search engines use it for the knowledge panel,
+// and it's the cleanest thing an AI agent can read to answer "who is this, what does
+// he do, how do I reach him" without parsing the page design.
+const PERSON_ID = new URL('/#nick', site).href;
+const person = {
+  '@type': 'Person',
+  '@id': PERSON_ID,
+  name: 'Nick Kidd',
+  url: site.href,
+  image: new URL('/assets/664e7db2648a5782b418f4b4_423004500_10232452459319571_5923361437801515210_n.jpg', site).href,
+  jobTitle: 'Creative Director',
+  description: DEFAULT_DESCRIPTION,
+  email: 'mailto:contact@nickkidd.net',
+  address: { '@type': 'PostalAddress', addressLocality: 'Dallas–Fort Worth', addressRegion: 'TX', addressCountry: 'US' },
+  worksFor: { '@type': 'Organization', name: 'Transmission Agency' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Texas Tech University' },
+  knowsAbout: [
+    'Creative direction', 'Brand strategy', 'Integrated campaigns', 'B2B marketing', 'Video production',
+    'Art direction', 'UX design', 'Web design', 'AI-enabled creative workflows', 'Creative operations',
+  ],
+  award: [
+    'Silver ADDY (2026)', 'Bronze, The Drum Awards (2026)', 'Gold B2 Award (2026)', 'Gold Reggie (2026)',
+    'Silver Telly (2026)', 'Gold MarCom (2024)', '32 Under 32 (2019)', 'Gold National ADDY (2018)',
+  ],
+  sameAs: ['https://www.linkedin.com/in/nickkidd/'],
+};
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    person,
+    { '@type': 'WebSite', '@id': new URL('/#site', site).href, url: site.href, name: 'Nick Kidd — Creative Director', publisher: { '@id': PERSON_ID } },
+    ...schema,
+  ],
+};
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    <meta property="og:image" content={new URL(og, Astro.site)} />
-    <meta name="twitter:image" content={new URL(og, Astro.site)} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {
+      preloader && (
+        <script is:inline>
+          // first visit this session, motion allowed → cover the page before it can paint
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            var seen = false;
+            try { seen = sessionStorage.getItem('nk-preloaded') === '1'; } catch (e) {}
+            if (!seen) document.documentElement.classList.add('is-preloading');
+          }
+        </script>
+      )
+    }
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Nick Kidd" />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#6100b9" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Nick Kidd" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {/* a plain-text brief on Nick for AI agents (llmstxt.org convention) */}
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Nick Kidd — brief for AI agents" />
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
     <link rel="shortcut icon" href="/assets/6661e597af31c8694ab6276f_32.png" type="image/x-icon" />
     <link rel="apple-touch-icon" href="/assets/6661e5a0af31c8694ab62e06_665f43a979bbd64b9828e072_nkpurple.png" />
 
@@ -72,6 +164,7 @@ const og = '/assets/66fb86c7ab99708cc5fa2d08_sitecard.jpg';
     {footer && <FooterCta />}
     <script>
       import '../scripts/app.js';
+      import '../scripts/reveal.js';
     </script>
   </body>
 </html>

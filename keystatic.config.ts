@@ -27,7 +27,18 @@ export default config({
         }),
         client: fields.text({ label: 'Client' }),
         role: fields.text({ label: 'Role' }),
-        category: fields.text({ label: 'Category', validation: { isRequired: true } }),
+        category: fields.select({
+          label: 'Category',
+          description: 'Drives the work filter and the label on each project.',
+          options: [
+            { label: 'Campaign', value: 'Campaign' },
+            { label: 'UX', value: 'UX' },
+            { label: 'AI', value: 'AI' },
+            { label: 'Design', value: 'Design' },
+            { label: 'Branding', value: 'Branding' },
+          ],
+          defaultValue: 'Campaign',
+        }),
         year: fields.text({ label: 'Year', description: 'e.g. 2024 or 2015-2020' }),
         summary: fields.text({ label: 'Summary', multiline: true }),
         image1: fields.image({
@@ -62,6 +73,11 @@ export default config({
         overview: fields.markdoc.inline({ label: 'Overview' }),
         approach: fields.markdoc.inline({ label: 'Approach' }),
         outcome: fields.markdoc.inline({ label: 'Outcome' }),
+        password: fields.text({
+          label: 'Password (optional)',
+          description:
+            'If set, visitors must enter this before the project page will show — use to share unpublished work with a client. Leave blank for a public project.',
+        }),
       },
     }),
     blog: collection({

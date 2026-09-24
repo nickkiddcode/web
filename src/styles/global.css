@@ -35,14 +35,122 @@ img {
 
 /* Motion-safety: the GSAP layer checks this too, but hard-disable CSS loops for reduced motion. */
 @media (prefers-reduced-motion: reduce) {
-  .loader {
-    display: none;
-  }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Blur reveal: marked elements arrive out of focus and settle as they come into view
+   (src/scripts/reveal.js adds .is-in). */
+[data-blur] {
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(26px);
+  transition: opacity 0.7s ease, filter 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-blur].is-in { opacity: 1; filter: blur(0); transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-blur] { opacity: 1; filter: none; transform: none; transition: none; }
+}
+
+/* ---------- Brand purple as a living material ----------
+   Everything purple on the homepage (the hero name, the logo, the footer) is one
+   animated mesh: seven blooms of neighbouring purples — from a pale lilac and a hot
+   orchid down to a near-black indigo — drifting over the brand #6100b9, with a film
+   grain laid over the top. The bloom positions are registered custom properties so
+   the browser can interpolate them; a plain background-position shift reads as a
+   slide, not a mesh. Each bloom fades out along an eased curve (six stops,
+   smoothstep-shaped) rather than a straight line to transparent — a linear fade
+   reads as a visible ring where it ends; this one just dissolves.
+   .mesh        fills the element's background (footer)
+   .mesh-text   clips it to the text (hero name) — grain and all
+   .mesh-mask   clips it to a shape image passed as --mask (logo) */
+@property --m1x { syntax: '<percentage>'; inherits: false; initial-value: 14%; }
+@property --m1y { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
+@property --m2x { syntax: '<percentage>'; inherits: false; initial-value: 86%; }
+@property --m2y { syntax: '<percentage>'; inherits: false; initial-value: 26%; }
+@property --m3x { syntax: '<percentage>'; inherits: false; initial-value: 30%; }
+@property --m3y { syntax: '<percentage>'; inherits: false; initial-value: 88%; }
+@property --m4x { syntax: '<percentage>'; inherits: false; initial-value: 78%; }
+@property --m4y { syntax: '<percentage>'; inherits: false; initial-value: 76%; }
+@property --m5x { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
+@property --m5y { syntax: '<percentage>'; inherits: false; initial-value: 46%; }
+@property --m6x { syntax: '<percentage>'; inherits: false; initial-value: 62%; }
+@property --m6y { syntax: '<percentage>'; inherits: false; initial-value: 8%; }
+@property --m7x { syntax: '<percentage>'; inherits: false; initial-value: 6%; }
+@property --m7y { syntax: '<percentage>'; inherits: false; initial-value: 64%; }
+
+.mesh {
+  background-color: #6100b9;
+  background-image:
+    /* grain: a tile of desaturated fractal noise (public/assets/grain.svg), overlaid */
+    url("/assets/grain.svg"),
+    radial-gradient(at var(--m6x) var(--m6y), #c793ffff 0%, #c793ffc7 8%, #c793ff80 17%, #c793ff42 25%, #c793ff17 34%, #c793ff00 42%),
+    radial-gradient(at var(--m1x) var(--m1y), #9a55ffff 0%, #9a55ffc7 12%, #9a55ff80 23%, #9a55ff42 35%, #9a55ff17 46%, #9a55ff00 58%),
+    radial-gradient(at var(--m5x) var(--m5y), #b43cffff 0%, #b43cffc7 10%, #b43cff80 19%, #b43cff42 29%, #b43cff17 38%, #b43cff00 48%),
+    radial-gradient(at var(--m2x) var(--m2y), #3f0086ff 0%, #3f0086c7 13%, #3f008680 26%, #3f008642 38%, #3f008617 51%, #3f008600 64%),
+    radial-gradient(at var(--m3x) var(--m3y), #7428ffff 0%, #7428ffc7 12%, #7428ff80 24%, #7428ff42 36%, #7428ff17 48%, #7428ff00 60%),
+    radial-gradient(at var(--m4x) var(--m4y), #26045aff 0%, #26045ac7 13%, #26045a80 26%, #26045a42 40%, #26045a17 53%, #26045a00 66%),
+    radial-gradient(at var(--m7x) var(--m7y), #8e10c8ff 0%, #8e10c8c7 11%, #8e10c880 22%, #8e10c842 32%, #8e10c817 43%, #8e10c800 54%);
+  background-size: 240px 240px, auto, auto, auto, auto, auto, auto, auto;
+  background-blend-mode: overlay, normal, normal, normal, normal, normal, normal, normal;
+  animation: mesh-drift 20s ease-in-out infinite alternate;
+}
+.mesh-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.mesh-mask {
+  -webkit-mask: var(--mask) center / contain no-repeat;
+  mask: var(--mask) center / contain no-repeat;
+}
+
+@keyframes mesh-drift {
+  0%   { --m1x: 14%; --m1y: 20%; --m2x: 86%; --m2y: 26%; --m3x: 30%; --m3y: 88%; --m4x: 78%; --m4y: 76%; --m5x: 50%; --m5y: 46%; --m6x: 62%; --m6y: 8%;  --m7x: 6%;  --m7y: 64%; }
+  25%  { --m1x: 38%; --m1y: 8%;  --m2x: 70%; --m2y: 56%; --m3x: 10%; --m3y: 60%; --m4x: 94%; --m4y: 92%; --m5x: 28%; --m5y: 70%; --m6x: 84%; --m6y: 30%; --m7x: 20%; --m7y: 36%; }
+  50%  { --m1x: 66%; --m1y: 30%; --m2x: 32%; --m2y: 16%; --m3x: 46%; --m3y: 96%; --m4x: 58%; --m4y: 50%; --m5x: 74%; --m5y: 84%; --m6x: 18%; --m6y: 12%; --m7x: 90%; --m7y: 62%; }
+  75%  { --m1x: 82%; --m1y: 58%; --m2x: 12%; --m2y: 40%; --m3x: 70%; --m3y: 22%; --m4x: 30%; --m4y: 80%; --m5x: 44%; --m5y: 20%; --m6x: 50%; --m6y: 92%; --m7x: 64%; --m7y: 8%;  }
+  100% { --m1x: 90%; --m1y: 80%; --m2x: 40%; --m2y: 70%; --m3x: 88%; --m3y: 12%; --m4x: 12%; --m4y: 30%; --m5x: 20%; --m5y: 54%; --m6x: 30%; --m6y: 60%; --m7x: 76%; --m7y: 90%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mesh { animation: none; }
+}
+/* the nav logo: the PNG is now only the mask's shape, so the element carries the
+   image's own proportions (294 × 188) and takes its width from .logo-image */
+.logo-mesh { display: block; aspect-ratio: 294 / 188; }
+
+/* ---------- Heading looks, decoupled from heading tags ----------
+   The Webflow port styles its headings by tag (h1 = the purple display face, h4 = the
+   loos-extended caps, …) and used <h1> wherever it wanted that look — labels, numbers,
+   section eyebrows — which leaves search engines and recruiter/AI crawlers with a pile of
+   competing top-level headings. These classes carry each tag's look so an element can
+   take the heading level that matches its meaning (or no heading at all) without moving
+   a pixel. They live in the `site` layer at tag-level specificity, after site.css, so
+   they beat the tag rules but every Webflow class rule still beats them — exactly where
+   the tag rules sat. */
+@layer site {
+  :is(h1, h2, h3, h4, h5, h6, div, p):where(.as-h1) {
+    display: block; margin-top: 20px; margin-bottom: 10px;
+    color: var(--purple); font-family: Zalandosansexpanded Variablefont Wght, Arial, sans-serif;
+    font-size: 38px; font-weight: 400; line-height: 44px;
+  }
+  :is(h1, h2, h3, h4, h5, h6, div, p):where(.as-h2) {
+    display: block; margin-top: 20px; margin-bottom: 10px;
+    font-size: 32px; font-weight: bold; line-height: 36px;
+  }
+  :is(h1, h2, h3, h4, h5, h6, div, p):where(.as-h3) {
+    display: block; margin-top: 20px; margin-bottom: 10px;
+    font-size: 24px; font-weight: bold; line-height: 30px;
+  }
+  :is(h1, h2, h3, h4, h5, h6, div, p):where(.as-h4) {
+    display: block; margin-top: 0; margin-bottom: 10px;
+    font-family: loos-extended, sans-serif; text-transform: uppercase;
+    font-size: 50px; font-weight: 400; line-height: 50px;
   }
 }

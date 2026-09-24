@@ -1,20 +1,45 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
-import { Image } from 'astro:assets';
+// A case study, in the homepage's language: a big title with the summary and a credits
+// bar, the hero edge to edge, the story as labelled two-column blocks (a bulleted
+// Outcome becomes a stack of display rows — the results are the point), the films, an
+// editorial gallery, and a black "Next project" panel to keep people moving.
+//
+// Password-gated projects need a per-request check, so this route can't be
+// prerendered like the rest of the site (Astro 5: static by default, opt out
+// per-route) — see keystatic.config.ts's `password` field.
+export const prerender = false;
+
+import { getCollection, getEntry } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import VideoEmbed from '../../components/VideoEmbed.astro';
 import { renderMarkdoc } from '../../lib/markdoc';
 
-export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+const project = await getEntry('projects', Astro.params.slug!);
+if (!project) {
+  return new Response('Not found', { status: 404 });
 }
-
-interface Props {
-  project: CollectionEntry<'projects'>;
-}
-const { project } = Astro.props;
 const d = project.data;
+
+const cookieName = `pw_${project.id}`;
+let unlocked = !d.password || Astro.cookies.get(cookieName)?.value === d.password;
+let wrongPassword = false;
+
+if (d.password && Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  if (form.get('password') === d.password) {
+    Astro.cookies.set(cookieName, d.password, {
+      path: `/projects/${project.id}`,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+    unlocked = true;
+  } else {
+    wrongPassword = true;
+  }
+}
 
 const details = [
   ['Client', d.client],
@@ -33,142 +58,293 @@ const gallery = [d.image2, d.image3, d.image4, d.image5, d.image6, d.image7, d.i
   (i) => i != null
 );
 
-// related projects: same category first, then next-in-order (wrapping), 3 total
+// search + share: a title that names the client and the kind of work, a description
+// that never comes up empty, the hero image as the share card, and the case study as
+// a schema.org CreativeWork credited to Nick
+const pageTitle = `${d.title}${d.client && !d.title.includes(d.client) ? ` — ${d.client}` : ''} | Nick Kidd, Creative Director`;
+const pageDescription =
+  d.summary || `${d.category} work${d.client ? ` for ${d.client}` : ''} by creative director Nick Kidd${d.year ? ` (${d.year})` : ''}.`;
+const shareImage = d.image1 ? (await getImage({ src: d.image1, width: 1200, format: 'jpg' })).src : undefined;
+const NICK = new URL('/#nick', Astro.site).href;
+const caseStudy = {
+  '@type': 'CreativeWork',
+  name: d.title,
+  description: pageDescription,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  ...(shareImage && { image: new URL(shareImage, Astro.site).href }),
+  genre: d.category,
+  ...(d.year && { dateCreated: d.year.slice(0, 4) }),
+  creator: { '@id': NICK },
+  ...(d.client && { sourceOrganization: { '@type': 'Organization', name: d.client } }),
+};
+
+// what comes next: the following project in the site's own order (wrapping), for the closing panel
 const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const idx = all.findIndex((p) => p.id === project.id);
-const sameCategory = all.filter((p) => p.id !== project.id && p.data.category === d.category);
-const nextInOrder = [...all.slice(idx + 1), ...all.slice(0, idx)];
-const related = [...new Set([...sameCategory, ...nextInOrder])].filter((p) => p.id !== project.id).slice(0, 3);
+const next = all[(idx + 1) % all.length];
+const nextImage = next.data.image1 ? (await getImage({ src: next.data.image1, width: 1000, format: 'webp' })).src : null;
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// the hero already plays heroEmbed — don't show the same film again further down
+const films = d.videoEmbeds.filter((url) => !(d.heroEmbed && !d.video1 && url === d.heroEmbed));
 ---
 
-<Base title={`${d.title} – Nick Kidd`} description={d.summary}>
-  <section class="single-project-section">
-    <div class="w-layout-blockcontainer main-container w-container">
-      <div class="div-block-42">
-        <div class="div-block-49">
-          <a href="/work" class="text-block-18 inline-flex items-center gap-2">
-            <img
-              src="/assets/6711338183204ff65e11a137_arrow-black.svg"
-              alt=""
-              width="15"
-              height="13"
-              class="h-[13px] w-auto shrink-0 rotate-180"
-            />
-            ALL PROJECTS
-          </a>
+<Base
+  title={pageTitle}
+  description={d.password ? `A private case study by creative director Nick Kidd.` : pageDescription}
+  image={d.password ? undefined : shareImage}
+  type="article"
+  schema={d.password ? [] : [caseStudy]}
+  noindex={!!d.password}
+>
+  {/* password-gated project, not yet unlocked: only the title and a password field */}
+  {!unlocked ? (
+    <main class="cs cs-gate">
+      <section class="cs-hero">
+        <div class="cs-meta">
+          <a href="/work" class="cs-back"><span aria-hidden="true">←</span> All work</a>
+          <span>Private</span>
         </div>
-        <h2 class="single-proj-header">{d.title}</h2>
-        <p class="paragraph-14">{d.summary}</p>
+        <h1 class="cs-title">{d.title}</h1>
+        <form method="post" class="cs-gate-form">
+          <label for="cs-pw">This case study is private. Enter the password to view it.</label>
+          <div class="cs-gate-row">
+            <input id="cs-pw" name="password" type="password" autocomplete="current-password" required autofocus />
+            <button type="submit">View</button>
+          </div>
+          {wrongPassword && <p class="cs-gate-error" role="alert">That password didn't match. Try again.</p>}
+        </form>
+      </section>
+    </main>
+  ) : (
+  <main class="cs">
+    {/* ---------- title, summary, credits ---------- */}
+    <section class="cs-hero">
+      <div class="cs-meta" data-blur>
+        <a href="/work" class="cs-back"><span aria-hidden="true">←</span> All work</a>
+        <span>Project {pad(idx + 1)} / {pad(all.length)}</span>
       </div>
-      <div class="div-block-43">
+      <h1 class="cs-title" data-blur>{d.title}</h1>
+      {d.summary && <p class="cs-lede" data-blur>{d.summary}</p>}
+      <dl class="cs-credits" data-blur>
         {details.map(([label, value]) => (
-          <div class="projectdetails">
-            <h1 class="projdescriptionhead">{label}</h1>
-            <div class="text-block-17">{value}</div>
+          <div>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
           </div>
         ))}
-      </div>
-    </div>
-  </section>
+      </dl>
+    </section>
 
-  <div class="div-block-48">
     {/* hero rule: video1 (raw upload) wins, then heroEmbed (YouTube/Vimeo link), then image1 */}
-    {
-      d.video1 ? (
-        <video
-          class="project-img"
-          autoplay
-          loop
-          muted
-          playsinline
-          data-lazy-video
-          aria-label={`${d.title} hero video`}
-        >
-          <source data-src={d.video1} type="video/mp4" />
-        </video>
-      ) : d.heroEmbed ? (
-        <VideoEmbed url={d.heroEmbed} />
-      ) : d.image1 ? (
-        <Image src={d.image1} alt={d.title} class="project-img" widths={[800, 1280, 1920]} sizes="100vw" />
-      ) : null
-    }
-  </div>
-
-  <section class="single-content-section">
-    {sections.length > 0 && (
-      <div class="w-layout-blockcontainer container-12 w-container">
-        {sections.map(([label, html]) => (
-          <>
-            <h1 class="projdescriptionhead">{label}</h1>
-            <div class="project-body w-richtext" set:html={html} />
-          </>
-        ))}
-      </div>
-    )}
-
-    {d.videoEmbeds.map((url) => (
-      <div class="videowrapper">
-        <VideoEmbed url={url} />
-      </div>
-    ))}
-
-    {gallery.length > 0 && (
-      <div class="w-layout-blockcontainer container-13 w-container">
-        {gallery.map((img, i) => (
-          <Image
-            src={img!}
-            alt={`${d.title} — image ${i + 2}`}
-            class={`image-${19 + i}`}
-            widths={[800, 1280, 1920]}
-            sizes="(max-width: 767px) 100vw, 90vw"
-            loading="lazy"
-          />
-        ))}
-      </div>
-    )}
-
-  </section>
-
-  {/* related projects: same category first, padded with the next in order */}
-  <section class="border-t border-line px-6 py-20" aria-label="More work">
-    <div class="mx-auto max-w-6xl">
-      <div class="mb-10 flex flex-wrap items-baseline justify-between gap-4" data-reveal>
-        <h2 class="font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-none text-ink uppercase">More work</h2>
-        <a
-          href="/work"
-          class="group font-body text-[13px] font-semibold tracking-[0.2em] text-ink uppercase hover:text-purple"
-        >
-          All projects <span aria-hidden="true" class="ml-1 inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-        </a>
-      </div>
-      <div class="grid grid-cols-1 gap-9 md:grid-cols-3">
-        {related.map((p) => (
-          <a href={`/projects/${p.id}`} class="group block" data-reveal>
-            {p.data.image1 && (
-              <Image
-                src={p.data.image1}
-                alt={p.data.title}
-                widths={[600, 900]}
-                sizes="(max-width: 767px) 100vw, 33vw"
-                loading="lazy"
-                class="aspect-video w-full object-cover"
-              />
-            )}
-            <p class="mt-4 font-body text-[12px] tracking-[0.2em] text-ink/50 uppercase">
-              {p.data.category}
-              {p.data.year && (
-                <>
-                  <span aria-hidden="true" class="mx-2 text-ink/30">|</span>
-                  {p.data.year}
-                </>
-              )}
-            </p>
-            <p class="mt-1.5 font-display text-[clamp(1.2rem,2vw,1.6rem)] leading-tight text-ink uppercase group-hover:text-purple">
-              {p.data.title}
-            </p>
-          </a>
-        ))}
-      </div>
+    <div class="cs-hero-media" data-blur>
+      {
+        d.video1 ? (
+          <video class="cs-hero-img" autoplay loop muted playsinline data-lazy-video aria-label={`${d.title} hero video`}>
+            <source data-src={d.video1} type="video/mp4" />
+          </video>
+        ) : d.heroEmbed ? (
+          <VideoEmbed url={d.heroEmbed} />
+        ) : d.image1 ? (
+          <Image src={d.image1} alt={d.title} class="cs-hero-img" widths={[800, 1280, 1920, 2560]} sizes="100vw" />
+        ) : null
+      }
     </div>
-  </section>
+
+    {/* ---------- the story ---------- */}
+    {sections.length > 0 && (
+      <section class="cs-story">
+        {sections.map(([label, html]) => (
+          <div class:list={['cs-block', label === 'Outcome' && 'cs-outcome']} data-blur>
+            <h2 class="cs-label">{label}</h2>
+            <div class="cs-body" set:html={html} />
+          </div>
+        ))}
+      </section>
+    )}
+
+    {films.length > 0 && (
+      <section class="cs-films">
+        {films.map((url) => (
+          <div class="cs-film" data-blur>
+            <VideoEmbed url={url} />
+          </div>
+        ))}
+      </section>
+    )}
+
+    {/* gallery rhythm: every third image runs the full width, the two between sit side by side
+        (and a last image with no partner takes the full width rather than sitting alone) */}
+    {gallery.length > 0 && (
+      <section class="cs-gallery">
+        {gallery.map((img, i) => (
+          <figure class:list={['cs-shot', (i % 3 === 0 || (i === gallery.length - 1 && i % 3 === 1)) && 'is-wide']} data-blur>
+            <Image
+              src={img!}
+              alt={`${d.title} — image ${i + 2}`}
+              widths={[800, 1280, 1920]}
+              sizes={i % 3 === 0 ? '100vw' : '(max-width: 767px) 100vw, 50vw'}
+              loading="lazy"
+            />
+          </figure>
+        ))}
+      </section>
+    )}
+
+    {/* ---------- next ---------- */}
+    <section class="cs-next">
+      <a href={`/projects/${next.id}`} class="cs-next-link">
+        <span class="cs-label cs-label--dark">Next project</span>
+        <span class="cs-next-body">
+          <span class="cs-next-title">{next.data.title}</span>
+          <span class="cs-next-tags">{[next.data.category, next.data.client].filter(Boolean).join(' · ')}</span>
+        </span>
+        {nextImage && <img class="cs-next-img" src={nextImage} alt="" loading="lazy" />}
+      </a>
+      <a href="/work" class="cs-next-all">All work <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+  )}
 </Base>
+
+<style>
+  .cs {
+    --ink: #1c1c1d;
+    --muted: rgba(28, 28, 29, 0.56);
+    --rule: rgba(28, 28, 29, 0.14);
+    --gutter: clamp(20px, 4.4vw, 64px);
+    --display: 'Zalandosansexpanded Variablefont Wght', Arial, sans-serif;
+    color: var(--ink);
+    background: var(--white, #f0efee);
+    font-family: 'Work Sans', sans-serif;
+  }
+  .cs p, .cs h1, .cs h2 { margin: 0; color: inherit; }
+  .cs-label {
+    font-family: 'Work Sans', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  }
+  .cs-label--dark { color: #c9b0ec; }
+
+  /* ---------- title, summary, credits ---------- */
+  .cs-hero { padding: clamp(40px, 9vh, 120px) var(--gutter) clamp(40px, 6vh, 72px); }
+  .cs-meta {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding-bottom: 18px; margin-bottom: clamp(28px, 5vh, 64px); border-bottom: 1px solid var(--rule);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  }
+  .cs-back { color: var(--ink); text-decoration: none; }
+  .cs-back span { display: inline-block; transition: transform 0.3s ease; }
+  .cs-back:hover span { transform: translateX(-4px); }
+  .cs-title {
+    font-family: var(--display); font-weight: 300;
+    font-size: clamp(44px, 8vw, 150px); line-height: 0.94; letter-spacing: -0.035em;
+    max-width: 14ch; text-wrap: balance;
+  }
+  .cs-lede {
+    margin-top: clamp(24px, 4vh, 48px) !important; margin-left: auto !important;
+    max-width: 46ch; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55;
+  }
+  .cs-credits {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: clamp(40px, 7vh, 88px) 0 0; border-top: 1px solid var(--ink);
+  }
+  .cs-credits div { padding: 18px 16px 0 0; }
+  .cs-credits div:not(:first-child) { padding-left: 16px; border-left: 1px solid var(--rule); }
+  .cs-credits dt { font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .cs-credits dd { margin: 8px 0 0; font-family: var(--display); font-size: clamp(15px, 1.25vw, 19px); line-height: 1.3; }
+
+  /* ---------- hero media, edge to edge ---------- */
+  .cs-hero-media { background: #000; }
+  .cs-hero-media :global(.cs-hero-img) { display: block; width: 100%; height: auto; max-height: 92vh; object-fit: cover; }
+
+  /* ---------- the story ---------- */
+  .cs-story { padding: clamp(80px, 12vh, 160px) var(--gutter) 0; display: grid; gap: clamp(56px, 9vh, 112px); }
+  .cs-block {
+    display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: clamp(20px, 4vw, 72px);
+    padding-top: 22px; border-top: 1px solid var(--ink);
+  }
+  .cs-block .cs-label { color: var(--ink); padding-top: 0.5em; }
+  .cs-body { max-width: 62ch; display: grid; gap: 1.1em; }
+  .cs-body :global(p) { font-size: clamp(17px, 1.35vw, 21px); line-height: 1.65; color: rgba(28, 28, 29, 0.84); margin: 0; }
+  .cs-body :global(h2), .cs-body :global(h3), .cs-body :global(h4) {
+    margin: 0.6em 0 0; font-family: var(--display); font-weight: 400; color: var(--ink);
+    font-size: clamp(24px, 2.4vw, 38px); line-height: 1.1; letter-spacing: -0.02em;
+  }
+  .cs-body :global(ul), .cs-body :global(ol) { margin: 0; padding-left: 1.2em; }
+  .cs-body :global(li) { font-size: clamp(17px, 1.35vw, 21px); line-height: 1.6; }
+  .cs-body :global(a) { color: var(--purple, #6100b9); }
+
+  /* the results: a bulleted Outcome list becomes a stack of display rows */
+  .cs-outcome .cs-body { max-width: none; }
+  .cs-outcome .cs-body :global(ul) { list-style: none; padding: 0; margin-top: 0.6em; border-top: 1px solid var(--rule); }
+  .cs-outcome .cs-body :global(li) {
+    font-family: var(--display); letter-spacing: -0.02em; line-height: 1.1;
+    font-size: clamp(24px, 3vw, 48px);
+    padding: clamp(14px, 2.2vh, 24px) 0; border-bottom: 1px solid var(--rule);
+    font-variation-settings: 'wght' 300; transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
+  }
+  .cs-outcome .cs-body :global(li:hover) { font-variation-settings: 'wght' 600; color: var(--purple, #6100b9); }
+
+  /* ---------- films + gallery ---------- */
+  .cs-films { padding: clamp(80px, 12vh, 160px) var(--gutter) 0; display: grid; gap: clamp(32px, 5vh, 64px); }
+  .cs-gallery {
+    padding: clamp(80px, 12vh, 160px) var(--gutter) clamp(96px, 14vh, 180px);
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 40px); align-items: start;
+  }
+  .cs-shot { margin: 0; }
+  .cs-shot.is-wide { grid-column: 1 / -1; }
+  .cs-shot :global(img) { display: block; width: 100%; height: auto; }
+
+  /* ---------- next ---------- */
+  .cs-next { background: #000; color: #eff1f3; padding: clamp(64px, 10vh, 128px) var(--gutter) clamp(48px, 7vh, 80px); }
+  .cs-next-link {
+    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: clamp(24px, 4vw, 72px); row-gap: clamp(20px, 3vh, 36px);
+    color: inherit; text-decoration: none;
+  }
+  .cs-next-link .cs-label { grid-column: 1 / -1; }
+  .cs-next-body { display: grid; align-content: end; gap: 14px; }
+  .cs-next-title {
+    font-family: var(--display); font-size: clamp(40px, 6.4vw, 120px); line-height: 0.94; letter-spacing: -0.035em;
+    font-variation-settings: 'wght' 300; transition: font-variation-settings 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .cs-next-link:hover .cs-next-title { font-variation-settings: 'wght' 650; }
+  .cs-next-tags { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(239, 241, 243, 0.6); }
+  .cs-next-img {
+    display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .cs-next-link:hover .cs-next-img { transform: scale(1.03); }
+  .cs-next-all {
+    display: inline-block; margin-top: clamp(40px, 6vh, 72px);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #eff1f3; text-decoration: none; border-bottom: 1px solid rgba(239, 241, 243, 0.4); padding-bottom: 3px;
+  }
+  .cs-next-all:hover { border-color: #eff1f3; }
+
+  /* ---------- the password gate ---------- */
+  .cs-gate { min-height: 70vh; }
+  .cs-gate-form { margin-top: clamp(32px, 6vh, 72px); max-width: 520px; display: grid; gap: 16px; }
+  .cs-gate-form label { font-size: 16px; line-height: 1.5; }
+  .cs-gate-row { display: flex; gap: 10px; }
+  .cs-gate-row input {
+    flex: 1; min-width: 0; padding: 14px 16px; font: inherit; font-size: 16px;
+    border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  }
+  .cs-gate-row button {
+    padding: 14px 24px; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    border: 1px solid var(--ink); background: var(--ink); color: var(--white, #f0efee); cursor: pointer;
+  }
+  .cs-gate-row :is(input, button):focus-visible { outline: 2px solid var(--purple, #6100b9); outline-offset: 3px; }
+  .cs-gate-error { color: #b3261e; font-size: 14px; }
+
+  @media (max-width: 767px) {
+    .cs-credits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cs-credits div:nth-child(3) { padding-left: 0; border-left: 0; }
+    .cs-credits div:nth-child(n + 3) { margin-top: 18px; border-top: 1px solid var(--rule); }
+    .cs-lede { margin-left: 0 !important; }
+    .cs-block { grid-template-columns: minmax(0, 1fr); }
+    .cs-gallery { grid-template-columns: minmax(0, 1fr); }
+    .cs-next-link { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

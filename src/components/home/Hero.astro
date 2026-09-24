@@ -1,18 +1,28 @@
 ---
 // NICK/KIDD hero — two responsive variants as in the source (container-7 and largehero),
 // Spline scene lazy-loaded by app.js, background video lazy (poster first, sources attached on idle).
+// The large variant's letters are split into spans so the hover effect can drive each
+// one's own weight on Zalando Sans Expanded's variable "wght" axis.
 const SPLINE_URL = 'https://prod.spline.design/gPRWbBQLmX9stmVH/scene.splinecode';
 const POSTER = '/assets/hero-loop-poster.jpg';
+// aria-hidden on each letter + aria-label on the word: a screen reader gets "NICK",
+// not four separate single-letter announcements
+const letters = (word: string) =>
+  [...word].map((ch) => `<span class="wght-letter" data-letter aria-hidden="true">${ch}</span>`).join('');
 ---
 
 <section class="section relative">
+  {/* the one real headline on the page — the display name below is split into letters
+      and flanked by labels, which reads to crawlers and screen readers as
+      "NICK Creative Director KIDD"; this says it plainly, and the visuals are aria-hidden */}
+  <h1 class="sr-only">Nick Kidd — Creative Director</h1>
   <div class="w-layout-blockcontainer container-7 w-container">
     <div class="div-block-12">
       <div class="spline-scene-10" data-spline-url={SPLINE_URL}>
         <canvas></canvas>
       </div>
-      <h1 class="herotext" data-hero-fade>NICK</h1>
-      <h1 class="heading-24" data-hero-fade>KIDD</h1>
+      <div class="as-h1 herotext mesh mesh-text" aria-hidden="true" data-hero-fade>NICK</div>
+      <div class="as-h1 heading-24 mesh mesh-text" style="animation-delay:-7s" aria-hidden="true" data-hero-fade>KIDD</div>
     </div>
     <div class="hero-image-2">
       <div class="background-video-2 w-background-video w-background-video-atom">
@@ -37,14 +47,85 @@ const POSTER = '/assets/hero-loop-poster.jpg';
       <div class="spline-scene-10" data-spline-url={SPLINE_URL} data-hero-scale>
         <canvas></canvas>
       </div>
-      <h1 class="herotext" data-hero-rise>NICK</h1>
+      <div class="as-h1 herotext wght-text mesh mesh-text" aria-hidden="true" data-hero-rise data-wght set:html={letters('NICK')} />
       <div class="div-block-62">
         <div class="div-block-51">
-          <h4 class="heading-22" data-hero-fade>Operational</h4>
-          <h4 class="heading-22" data-hero-fade>Creative Director</h4>
+          <div class="as-h4 heading-22" aria-hidden="true" data-hero-fade>Creative Director</div>
         </div>
-        <h1 class="herotext _2" data-hero-rise>KIDD</h1>
+        <div class="as-h1 herotext _2 wght-text mesh mesh-text" style="animation-delay:-7s" aria-hidden="true" data-hero-rise data-wght set:html={letters('KIDD')} />
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  // NICK / KIDD sit at a light weight until the pointer comes near — the letter
+  // closest to it grows bold, the rest of that word's letters go lighter still.
+  // Listened on the document, not the words themselves: the Spline mark's canvas
+  // sits on top of the name (same stacking layer, full container) and is what the
+  // pointer actually hits even where it's visibly transparent, so a listener on
+  // the text itself never sees the move — hit-test each word's box by hand instead.
+  const REST = 300, PEAK = 700, FAR = 200;
+  const words = [...document.querySelectorAll<HTMLElement>('[data-wght]')].map((host) => ({
+    host,
+    letters: [...host.querySelectorAll<HTMLElement>('[data-letter]')],
+    active: false,
+  }));
+
+  const setWeight = (el: HTMLElement, w: number) => {
+    el.style.fontVariationSettings = `"wght" ${w}`;
+  };
+
+  document.addEventListener('pointermove', (e) => {
+    for (const w of words) {
+      const r = w.host.getBoundingClientRect();
+      const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      if (!inside) {
+        if (w.active) { w.active = false; for (const l of w.letters) setWeight(l, REST); }
+        continue;
+      }
+      w.active = true;
+      // the single nearest letter goes to PEAK, every other letter in the word to FAR —
+      // no in-between weights, so it reads as one clear letter standing out at a time
+      let nearest = w.letters[0], best = Infinity;
+      for (const l of w.letters) {
+        const lr = l.getBoundingClientRect();
+        const dist = Math.hypot(e.clientX - (lr.left + lr.width / 2), e.clientY - (lr.top + lr.height / 2));
+        if (dist < best) { best = dist; nearest = l; }
+      }
+      for (const l of w.letters) setWeight(l, l === nearest ? PEAK : FAR);
+    }
+  });
+</script>
+
+<style is:global>
+  /* On a phone the full-viewport hero left a lot of dead air above and below the name —
+     let it size to its content instead, with the split labels still flanking it. */
+  @media (max-width: 767px) {
+    .section.relative {
+      height: auto;
+      min-height: 62svh;
+      justify-content: center;
+      padding-top: clamp(12px, 3vh, 28px);
+      padding-bottom: clamp(24px, 5vh, 48px);
+    }
+  }
+  /* site.css hides the Spline mark below 480px (a Webflow-era call for a phone
+     that never had the runtime budget for it) — bring it back. It already scales
+     with its container (inset: 0%) the same way it does at every other breakpoint. */
+  @media (max-width: 479px) {
+    .largehero .spline-scene-10 {
+      display: flex;
+    }
+  }
+
+  /* NICK / KIDD: each letter is its own span so it can carry its own weight on
+     Zalando Sans Expanded's variable axis — 300 at rest, up to 700 under the
+     cursor, down to 200 for the rest of that word (script above). A slower,
+     eased-out curve rather than linear 0.2s so it settles instead of snapping. */
+  .wght-letter {
+    display: inline-block;
+    font-variation-settings: 'wght' 300;
+    transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+</style>

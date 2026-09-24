@@ -3,14 +3,14 @@ const { pathname } = Astro.url;
 const links = [
   { href: '/work', label: 'WORK' },
   { href: '/about', label: 'ABOUT' },
-  { href: 'https://brand-storyteller-ai-38203086.base44.app', label: 'FREE INSIGHTS', external: true },
+  { href: 'https://brand-storyteller-ai-38203086.base44.app', label: 'Start making', external: true },
 ];
 ---
 
 <div id="home" class="header">
   <div class="inner-header">
     <a href="/" aria-current={pathname === '/' ? 'page' : undefined} class:list={['logo', 'w-nav-brand', pathname === '/' && 'w--current']}>
-      <img src="/assets/665f43a979bbd64b9828e072_nkpurple.png" loading="lazy" alt="Nick Kidd logo" class="logo-image" />
+      <span class="logo-image logo-mesh mesh mesh-mask" role="img" aria-label="Nick Kidd logo" style="--mask:url(/assets/665f43a979bbd64b9828e072_nkpurple.png)"></span>
     </a>
     <div class="container-14">
       {links.map((l) => (
@@ -21,7 +21,6 @@ const links = [
           rel={l.external ? 'noopener' : undefined}
         >
           <div class="navtext">{l.label}</div>
-          <div class="button-line"></div>
         </a>
       ))}
     </div>

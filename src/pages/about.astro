@@ -1,119 +1,399 @@
 ---
+// About — rebuilt in the homepage's language: Zalando Sans at display sizes, the brand
+// mesh on the words that matter, black panels for the proof, the blur reveal, and the
+// variable-weight hover from the hero. Ordered the way a senior hire gets read: the
+// idea, who he is right now, what he's strongest at, how he leads, the path, who he's done it for,
+// what it's won, and what the people who worked with him say.
+// All copy comes from src/data/about.json (Nick's words, verbatim) — this file is layout.
 import Base from '../layouts/Base.astro';
 import about from '../data/about.json';
+
+const [current] = about.experience;
+// the statement, with the one word that carries it set in the mesh
+const statementWords = about.quote.split(' ');
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<Base title="About – Nick Kidd">
-  <section class="section-4">
-    <div class="w-layout-blockcontainer container-9 w-container">
-      <div class="wrapper">
-        <div class="div-block-10">
-          <div class="fade-target1" data-reveal>
-            <h3 class="who-description">{about.quote}<br /></h3>
-          </div>
-          <div class="fadetrigger"></div>
-          <div class="fade-target2" data-reveal>
-            <div class="paragraph">{about.quotePara}</div>
-          </div>
-        </div>
+<Base
+  title="About Nick Kidd — Creative Director, Dallas–Fort Worth"
+  description="Nick Kidd has led creative for Transmission Agency, Pathfinder Studios and TracyLocke — directing award-winning work for Qualcomm, Audi and Samsung, and building the teams and systems behind it."
+  type="profile"
+>
+  <main class="ab">
+    {/* ---------- the idea ---------- */}
+    <section class="ab-hero">
+      <div class="ab-meta" data-blur>
+        <span>About</span>
+        <span>Dallas–Fort Worth · Remote</span>
       </div>
-    </div>
-
-    <div class="w-layout-blockcontainer about-hero w-container">
-      <div class="div-block-57" data-reveal>
-        <img src={about.heroImg} loading="lazy" alt="Nick Kidd" class="image-17" />
-        <div>
-          <h1 class="heading-34">{about.heroHeading}</h1>
-          <p class="paragraph-13">
-            {about.heroParas.map((p, i) => (
-              <>
-                {p}
-                {i < about.heroParas.length - 1 && (
-                  <>
-                    <br />
-                    <br />
-                  </>
-                )}
-              </>
-            ))}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="w-layout-blockcontainer resume w-container">
-      <h1 class="eyebrow">Experience</h1>
-      {about.experience.map((job) => (
-        <div class="div-block-58" data-reveal>
-          <div class="div-block-59">
-            <div class="year">{job.year}</div>
-          </div>
-          <div class="job">
-            <div class="text-block-23">{job.title}</div>
-            <div class={job.companyClass}>{job.company}</div>
-          </div>
-          <div class="div-block-60">
-            <p class="jobdescription">{job.description}</p>
-            <div class="text-block-24">{job.tags}</div>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <div class="w-layout-blockcontainer container-18 w-container" data-reveal>
-      <h1 class="eyebrow">Some of my beliefs</h1>
-      <div class="w-layout-blockcontainer beliefs w-container">
-        {about.beliefs.map((b) => (
-          <div class="div-block-61">
-            <h1 class="heading-32">{b.num}</h1>
-            <div class="beliefsubhead">{b.title}</div>
-            <div class="text-block-29">{b.text}</div>
-          </div>
+      <h1 class="ab-statement" data-blur>
+        <span class="sr-only">About Nick Kidd — </span>
+        {statementWords.map((w, i) => (
+          <>
+            <span class:list={['ab-word', w.toLowerCase() === 'story' && 'mesh mesh-text is-key']}>{w}</span>
+            {i < statementWords.length - 1 && ' '}
+          </>
         ))}
-      </div>
-    </div>
+      </h1>
+      <p class="ab-lede" data-blur>{about.quotePara}</p>
+    </section>
 
-    <div class="w-layout-blockcontainer container-15 w-container">
-      <h1 class="eyebrow">Testimonials</h1>
-      <div class="collection-list-wrapper-4 w-dyn-list">
-        <div role="list" class="collection-list-3 w-dyn-items w-row">
-          {about.testimonials.map((t) => (
-            <div role="listitem" class="collection-item-5 w-dyn-item w-col w-col-4">
-              <div class="testimonial" data-reveal>
-                <img src={t.image} loading="lazy" alt={t.name} class="image-18" />
-                <h1 class="heading-35">{t.name}</h1>
-                <div class="text-block-32">{t.role}</div>
-                <div class="text-block-31">{t.text}</div>
-              </div>
-            </div>
-          ))}
+    {/* ---------- who, right now ---------- */}
+    <section class="ab-intro">
+      <figure class="ab-portrait" data-blur>
+        <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" loading="lazy" />
+      </figure>
+      <div class="ab-intro-copy">
+        <h2 class="ab-hi" data-blur>{about.heroHeading}</h2>
+        <div class="ab-now" data-blur>
+          <p class="ab-label">Currently</p>
+          <p class="ab-now-role">{current.title}, {current.company}</p>
+          <div class="ab-now-links">
+            <a href="/assets/nick-kidd-resume.pdf">Resume (PDF)</a>
+            <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener">LinkedIn</a>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <section class="container-15">
-      <div class="clients" data-reveal>
-        <h1 class="eyebrow">select clients</h1>
-        <div class="text-block-20">
-          {about.clients.map((c, i) => (
-            <>
-              <span class={c.cls}>{c.name}</span>
-              {i < about.clients.length - 1 && ' '}
-            </>
-          ))}
+        <div class="ab-bio" data-blur>
+          {about.heroParas.map((p) => <p>{p}</p>)}
         </div>
       </div>
     </section>
 
-    <div class="w-layout-blockcontainer container-15 w-container" data-reveal>
-      <h1 class="eyebrow">Awards</h1>
-      {about.awards.map((a) => (
-        <div class="div-block-64">
-          <div class="text-block-30">{a.year}</div>
-          <div class="award">{a.award}</div>
-          <div class="awarddetail">{a.detail}</div>
+    {/* ---------- what he's strongest at ---------- */}
+    <section class="ab-dark ab-strengths" aria-labelledby="ab-strengths-h">
+      <h2 id="ab-strengths-h" class="ab-label ab-label--dark" data-blur>Primary strengths</h2>
+      <ul class="ab-strength-grid">
+        {about.strengths.map((s, i) => (
+          <li class="ab-strength" data-blur>
+            <span class="ab-strength-num">{pad(i + 1)}</span>
+            <h3 class="ab-strength-name">{s.name}</h3>
+            <p class="ab-strength-detail">{s.detail}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {/* ---------- how he leads ---------- */}
+    <section class="ab-section" aria-labelledby="ab-beliefs-h">
+      <div class="ab-section-head" data-blur>
+        <h2 id="ab-beliefs-h" class="ab-h2">How I work</h2>
+      </div>
+      <ol class="ab-beliefs">
+        {about.beliefs.map((b) => (
+          <li class="ab-belief" data-blur>
+            <span class="ab-belief-num">{b.num}</span>
+            <h3 class="ab-belief-title">{b.title}</h3>
+            <p class="ab-belief-text">{b.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* ---------- the path ---------- */}
+    <section class="ab-section" aria-labelledby="ab-exp-h">
+      <div class="ab-section-head" data-blur>
+        <h2 id="ab-exp-h" class="ab-h2">Experience</h2>
+      </div>
+      <ol class="ab-jobs">
+        {about.experience.map((j) => (
+          <li class="ab-job" data-blur>
+            <span class="ab-job-years">{j.year}</span>
+            <div class="ab-job-head">
+              <h3 class="ab-job-title">{j.title}</h3>
+              <p class="ab-job-company">{j.company}</p>
+            </div>
+            <div class="ab-job-body">
+              <p>{j.description}</p>
+              <p class="ab-job-tags">{j.tags}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* ---------- who for, and what it's won ---------- */}
+    <section class="ab-dark ab-proof">
+      <div class="ab-clients" aria-labelledby="ab-clients-h">
+        <h2 id="ab-clients-h" class="ab-label ab-label--dark" data-blur>Select clients</h2>
+        <ul class="ab-client-wall" data-blur>
+          {about.clients.map((c) => <li class="ab-client">{c.name}</li>)}
+        </ul>
+      </div>
+      <div class="ab-awards" aria-labelledby="ab-awards-h">
+        <h2 id="ab-awards-h" class="ab-label ab-label--dark" data-blur>Recognition</h2>
+        <ul class="ab-award-list">
+          {about.awards.map((a) => (
+            <li class="ab-award" data-blur>
+              <span class="ab-award-year">{a.year}</span>
+              <span class="ab-award-name">{a.award}</span>
+              <span class="ab-award-where">{a.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    {/* ---------- in their words ---------- */}
+    <section class="ab-section ab-words" aria-labelledby="ab-words-h">
+      <div class="ab-section-head ab-words-head" data-blur>
+        <h2 id="ab-words-h" class="ab-h2">In their words</h2>
+        <div class="ab-words-nav">
+          <span class="ab-words-count" aria-live="polite"><span data-words-i>01</span> / {pad(about.testimonials.length)}</span>
+          <button type="button" class="ab-arrow" data-words-prev aria-label="Previous testimonial">←</button>
+          <button type="button" class="ab-arrow" data-words-next aria-label="Next testimonial">→</button>
         </div>
-      ))}
-    </div>
-  </section>
+      </div>
+      <ul class="ab-words-track" data-words-track>
+        {about.testimonials.map((t) => (
+          <li class="ab-quote">
+            <blockquote>
+              <p class="ab-quote-text">“{t.text}”</p>
+            </blockquote>
+            <div class="ab-quote-by">
+              <img src={t.image} alt="" loading="lazy" width="56" height="56" />
+              <div>
+                <p class="ab-quote-name">{t.name}</p>
+                <p class="ab-quote-role">{t.role}</p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
 </Base>
+
+<script>
+  // testimonials: a native scroll-snap row (touch and trackpad swipe just work); the arrows
+  // step one quote at a time and the counter follows whichever quote is in view
+  const track = document.querySelector<HTMLElement>('[data-words-track]');
+  const label = document.querySelector<HTMLElement>('[data-words-i]');
+  if (track && label) {
+    const slides = [...track.children] as HTMLElement[];
+    const current = () => {
+      const x = track.scrollLeft + track.clientWidth * 0.3;
+      let i = 0;
+      slides.forEach((s, k) => { if (s.offsetLeft - track.offsetLeft <= x) i = k; });
+      return i;
+    };
+    const go = (i: number) => {
+      const k = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: slides[k].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    };
+    document.querySelector('[data-words-prev]')?.addEventListener('click', () => go(current() - 1));
+    document.querySelector('[data-words-next]')?.addEventListener('click', () => go(current() + 1));
+    track.addEventListener('scroll', () => { label.textContent = String(current() + 1).padStart(2, '0'); }, { passive: true });
+  }
+</script>
+
+<style>
+  .ab {
+    --ink: #1c1c1d;
+    --paper: var(--white, #f0efee);
+    --muted: rgba(28, 28, 29, 0.56);
+    --rule: rgba(28, 28, 29, 0.14);
+    --gutter: clamp(20px, 4.4vw, 64px);
+    --display: 'Zalandosansexpanded Variablefont Wght', Arial, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: 'Work Sans', sans-serif;
+  }
+  .ab p { margin: 0; }
+  .ab h1, .ab h2, .ab h3 { margin: 0; color: inherit; }
+
+  /* shared bits */
+  .ab-label {
+    margin: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .ab-label--dark { color: #c9b0ec; }
+  .ab-h2 {
+    font-family: var(--display);
+    font-size: clamp(30px, 4.2vw, 64px); font-weight: 300; line-height: 1; letter-spacing: -0.02em;
+  }
+  .ab-section { padding: clamp(80px, 12vh, 160px) var(--gutter) 0; }
+  .ab-section-head {
+    display: flex; justify-content: space-between; align-items: end; gap: 24px;
+    padding-bottom: clamp(24px, 3vh, 36px); border-bottom: 1px solid var(--ink);
+  }
+
+  /* ---------- the idea ---------- */
+  .ab-hero { padding: clamp(40px, 9vh, 120px) var(--gutter) clamp(56px, 9vh, 120px); }
+  .ab-meta {
+    display: flex; justify-content: space-between;
+    padding-bottom: 18px; margin-bottom: clamp(32px, 6vh, 72px); border-bottom: 1px solid var(--rule);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  }
+  .ab-statement {
+    font-family: var(--display);
+    font-size: clamp(46px, 8.6vw, 156px); font-weight: 300; line-height: 0.94; letter-spacing: -0.03em;
+    max-width: 13ch; text-wrap: balance;
+  }
+  .ab-word { display: inline-block; font-variation-settings: 'wght' 300; transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+  .ab-word.is-key { font-variation-settings: 'wght' 600; }
+  .ab-statement:hover .ab-word { font-variation-settings: 'wght' 200; }
+  .ab-statement .ab-word:hover, .ab-statement:hover .ab-word.is-key { font-variation-settings: 'wght' 700; }
+  .ab-lede {
+    margin-top: clamp(28px, 5vh, 56px) !important; margin-left: auto !important;
+    max-width: 44ch; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55;
+  }
+
+  /* ---------- who, right now ---------- */
+  .ab-intro {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 96px);
+    padding: 0 var(--gutter) clamp(80px, 12vh, 160px); align-items: start;
+  }
+  .ab-portrait { margin: 0; position: sticky; top: calc(var(--nav-h, 90px) + 24px); }
+  .ab-portrait img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .ab-hi {
+    font-family: var(--display);
+    font-size: clamp(40px, 5.6vw, 96px); font-weight: 400; line-height: 0.95; letter-spacing: -0.025em;
+    color: var(--purple, #6100b9);
+  }
+  .ab-now {
+    margin-top: clamp(28px, 4vh, 48px); padding: 22px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    display: grid; gap: 10px;
+  }
+  .ab-now-role { font-family: var(--display); font-size: clamp(18px, 1.6vw, 24px); line-height: 1.25; }
+  .ab-now-links { display: flex; gap: 22px; margin-top: 4px; }
+  .ab-now-links a, .ab-bio a {
+    color: var(--ink); text-decoration: none; font-size: 15px;
+    border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+  }
+  .ab-now-links a:hover { color: var(--purple, #6100b9); border-color: var(--purple, #6100b9); }
+  .ab-bio { margin-top: clamp(28px, 4vh, 44px); display: grid; gap: 1.1em; max-width: 56ch; }
+  .ab-bio p { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.65; color: rgba(28, 28, 29, 0.82); }
+
+  /* ---------- black panels ---------- */
+  .ab-dark { background: #000; color: #eff1f3; }
+
+  /* what he's strongest at: a 3 × 2 grid of display words, each lifting on hover */
+  .ab-strengths { padding: clamp(72px, 11vh, 140px) var(--gutter); }
+  .ab-strength-grid {
+    list-style: none; margin: clamp(28px, 4vh, 48px) 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid rgba(239, 241, 243, 0.18);
+  }
+  .ab-strength {
+    display: flex; flex-direction: column; gap: 14px;
+    padding: clamp(28px, 4vh, 48px) clamp(16px, 2vw, 32px) clamp(32px, 5vh, 56px);
+    border-bottom: 1px solid rgba(239, 241, 243, 0.18);
+  }
+  .ab-strength:not(:nth-child(3n + 1)) { border-left: 1px solid rgba(239, 241, 243, 0.18); }
+  .ab-strength:nth-child(3n + 1) { padding-left: 0; }
+  .ab-strength-num { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; color: rgba(239, 241, 243, 0.4); font-variant-numeric: tabular-nums; transition: color 0.3s ease; }
+  .ab-strength-name {
+    font-family: var(--display); font-size: clamp(34px, 4.4vw, 76px); line-height: 1; letter-spacing: -0.03em;
+    font-variation-settings: 'wght' 300; transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ab-strength-detail { max-width: 32ch; font-size: clamp(14px, 1.05vw, 16px); line-height: 1.55; color: rgba(239, 241, 243, 0.62); transition: color 0.3s ease; }
+  .ab-strength:hover .ab-strength-name { font-variation-settings: 'wght' 650; }
+  .ab-strength:hover .ab-strength-num { color: #b98cf0; }
+  .ab-strength:hover .ab-strength-detail { color: rgba(239, 241, 243, 0.9); }
+
+  /* ---------- how he leads ---------- */
+  .ab-beliefs { list-style: none; margin: 0; padding: 0; }
+  .ab-belief {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 7fr) minmax(0, 4fr);
+    gap: clamp(16px, 2.4vw, 40px); align-items: baseline;
+    padding: clamp(26px, 4vh, 48px) 0; border-bottom: 1px solid var(--rule);
+  }
+  .ab-belief-num { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; color: var(--muted); font-variant-numeric: tabular-nums; transition: color 0.3s ease; }
+  .ab-belief-title {
+    font-family: var(--display); font-size: clamp(28px, 4vw, 64px); line-height: 1; letter-spacing: -0.025em;
+    font-variation-settings: 'wght' 300; transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ab-belief-text { font-size: clamp(16px, 1.2vw, 18px); line-height: 1.55; color: rgba(28, 28, 29, 0.78); max-width: 36ch; }
+  .ab-belief:hover .ab-belief-title { font-variation-settings: 'wght' 620; }
+  .ab-belief:hover .ab-belief-num { color: var(--purple, #6100b9); }
+
+  /* ---------- the path ---------- */
+  .ab-jobs { list-style: none; margin: 0; padding: 0 0 clamp(80px, 12vh, 160px); }
+  .ab-job {
+    display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 5fr) minmax(0, 5fr);
+    gap: clamp(16px, 2.4vw, 40px); padding: clamp(28px, 4vh, 48px) 0; border-bottom: 1px solid var(--rule);
+  }
+  .ab-job-years { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); padding-top: 0.6em; }
+  .ab-job-title { font-family: var(--display); font-size: clamp(24px, 2.6vw, 42px); font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; }
+  .ab-job-company { margin-top: 8px !important; font-size: 15px; color: var(--purple, #6100b9); font-weight: 500; }
+  .ab-job-body { display: grid; gap: 14px; }
+  .ab-job-body p { font-size: clamp(15px, 1.1vw, 17px); line-height: 1.6; color: rgba(28, 28, 29, 0.8); }
+  .ab-job-body .ab-job-tags { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.8; color: var(--muted); }
+
+  /* ---------- who for, and what it's won ---------- */
+  .ab-proof { padding: clamp(80px, 12vh, 160px) var(--gutter); display: grid; gap: clamp(80px, 12vh, 160px); }
+  .ab-client-wall {
+    list-style: none; margin: clamp(28px, 4vh, 48px) 0 0; padding: 0;
+    display: flex; flex-wrap: wrap; column-gap: 0.5em; row-gap: 0.05em;
+    font-family: var(--display); font-size: clamp(34px, 5.6vw, 100px); line-height: 1.02; letter-spacing: -0.03em;
+  }
+  .ab-client {
+    color: rgba(239, 241, 243, 0.34);
+    font-variation-settings: 'wght' 300;
+    transition: color 0.35s ease, font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .ab-client:not(:last-child)::after { content: ' /'; color: rgba(239, 241, 243, 0.14); font-variation-settings: 'wght' 200; }
+  .ab-client:hover { color: #eff1f3; font-variation-settings: 'wght' 650; }
+
+  .ab-award-list { list-style: none; margin: clamp(20px, 3vh, 32px) 0 0; padding: 0; border-top: 1px solid rgba(239, 241, 243, 0.18); }
+  .ab-award {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 6fr) minmax(0, 3fr); gap: clamp(12px, 2vw, 32px);
+    align-items: baseline; padding: clamp(14px, 2.2vh, 22px) 0; border-bottom: 1px solid rgba(239, 241, 243, 0.18);
+  }
+  .ab-award-year { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; color: rgba(239, 241, 243, 0.5); font-variant-numeric: tabular-nums; }
+  .ab-award-name { font-family: var(--display); font-size: clamp(20px, 2.2vw, 34px); line-height: 1.1; letter-spacing: -0.015em; }
+  .ab-award-where { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(239, 241, 243, 0.5); text-align: right; }
+
+  /* ---------- in their words ---------- */
+  .ab-words { padding-bottom: clamp(80px, 12vh, 160px); }
+  .ab-words-nav { display: flex; align-items: center; gap: 10px; }
+  .ab-words-count { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+  .ab-arrow {
+    width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+    font-size: 18px; cursor: pointer; transition: background 0.25s ease, color 0.25s ease;
+  }
+  .ab-arrow:hover, .ab-arrow:focus-visible { background: var(--ink); color: var(--paper); }
+  .ab-arrow:focus-visible { outline: 2px solid var(--purple, #6100b9); outline-offset: 3px; }
+  .ab-words-track {
+    list-style: none; margin: 0; padding: clamp(36px, 5vh, 64px) 0 8px;
+    display: grid; grid-auto-flow: column; grid-auto-columns: min(78%, 900px); gap: clamp(28px, 4vw, 72px);
+    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  }
+  .ab-words-track::-webkit-scrollbar { display: none; }
+  .ab-quote { scroll-snap-align: start; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; }
+  /* site.css gives blockquote a heavy left bar and padding — the quote stands on type alone here */
+  .ab-quote blockquote { margin: 0; padding: 0; border: 0; font-size: inherit; line-height: inherit; }
+  .ab-quote-text {
+    font-family: var(--display); font-size: clamp(18px, 1.75vw, 28px); font-weight: 300;
+    line-height: 1.35; letter-spacing: -0.01em; text-wrap: pretty;
+  }
+  .ab-quote-by { display: flex; align-items: center; gap: 16px; }
+  .ab-quote-by img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; filter: grayscale(1); }
+  .ab-quote-name { font-family: var(--display); font-size: 17px; }
+  .ab-quote-role { margin-top: 4px !important; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---------- tablet + phone ---------- */
+  @media (max-width: 991px) {
+    .ab-strength-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ab-strength:nth-child(n) { padding-left: clamp(16px, 2vw, 32px); border-left: 1px solid rgba(239, 241, 243, 0.18); }
+    .ab-strength:nth-child(2n + 1) { padding-left: 0; border-left: 0; }
+    .ab-belief { grid-template-columns: minmax(0, 1fr) minmax(0, 9fr); }
+    .ab-belief-text { grid-column: 2; }
+    .ab-job { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .ab-job-years { padding-top: 0; }
+  }
+  @media (max-width: 767px) {
+    .ab-intro { grid-template-columns: minmax(0, 1fr); }
+    .ab-portrait { position: static; }
+    .ab-lede { margin-left: 0 !important; }
+    .ab-meta span:last-child { text-align: right; }
+    .ab-strength-grid { grid-template-columns: minmax(0, 1fr); }
+    .ab-strength:nth-child(n) { padding-left: 0; border-left: 0; }
+    .ab-award { grid-template-columns: minmax(0, 1fr) minmax(0, 4fr); row-gap: 6px; }
+    .ab-award-where { grid-column: 2; text-align: left; }
+    .ab-words-head { flex-wrap: wrap; }
+    .ab-words-track { grid-auto-columns: 88%; }
+  }
+</style>

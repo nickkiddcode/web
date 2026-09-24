@@ -1,0 +1,160 @@
+{
+  "dragonfly-brand-launch": [
+    {
+      "id": "dragonfly-1",
+      "src": "/assets/spiral/dragonfly-1.mp4",
+      "poster": "/assets/spiral/dragonfly-1.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "dragonfly-2",
+      "src": "/assets/spiral/dragonfly-2.mp4",
+      "poster": "/assets/spiral/dragonfly-2.jpg",
+      "w": 480,
+      "h": 92
+    },
+    {
+      "id": "dragonfly-3",
+      "src": "/assets/spiral/dragonfly-3.mp4",
+      "poster": "/assets/spiral/dragonfly-3.jpg",
+      "w": 480,
+      "h": 270
+    }
+  ],
+  "fluence-design-and-content": [
+    {
+      "id": "fluence-tj",
+      "src": "/assets/spiral/fluence-tj.mp4",
+      "poster": "/assets/spiral/fluence-tj.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "fluence-roman",
+      "src": "/assets/spiral/fluence-roman.mp4",
+      "poster": "/assets/spiral/fluence-roman.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "fluence-nicole",
+      "src": "/assets/spiral/fluence-nicole.mp4",
+      "poster": "/assets/spiral/fluence-nicole.jpg",
+      "w": 480,
+      "h": 270
+    }
+  ],
+  "snapdragon": [
+    {
+      "id": "snapdragon-1",
+      "src": "/assets/spiral/snapdragon-1.mp4",
+      "poster": "/assets/spiral/snapdragon-1.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "snapdragon-2",
+      "src": "/assets/spiral/snapdragon-2.mp4",
+      "poster": "/assets/spiral/snapdragon-2.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "snapdragon-3",
+      "src": "/assets/spiral/snapdragon-3.mp4",
+      "poster": "/assets/spiral/snapdragon-3.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "snapdragon-4",
+      "src": "/assets/spiral/snapdragon-4.mp4",
+      "poster": "/assets/spiral/snapdragon-4.jpg",
+      "w": 480,
+      "h": 270
+    }
+  ],
+  "great-minds-poc": [
+    {
+      "id": "great-minds",
+      "src": "/assets/spiral/great-minds.mp4",
+      "poster": "/assets/spiral/great-minds.jpg",
+      "w": 480,
+      "h": 274
+    }
+  ],
+  "4r": [
+    {
+      "id": "4r-ad-square",
+      "src": "/assets/spiral/4r-ad-square.mp4",
+      "poster": "/assets/spiral/4r-ad-square.jpg",
+      "w": 480,
+      "h": 480
+    },
+    {
+      "id": "4r-ad-4x5",
+      "src": "/assets/spiral/4r-ad-4x5.mp4",
+      "poster": "/assets/spiral/4r-ad-4x5.jpg",
+      "w": 480,
+      "h": 600
+    },
+    {
+      "id": "4r-built-vertical",
+      "src": "/assets/spiral/4r-built-vertical.mp4",
+      "poster": "/assets/spiral/4r-built-vertical.jpg",
+      "w": 480,
+      "h": 854
+    }
+  ],
+  "audi-dealership": [
+    {
+      "id": "audi-1",
+      "src": "/assets/spiral/audi-1.mp4",
+      "poster": "/assets/spiral/audi-1.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "audi-2",
+      "src": "/assets/spiral/audi-2.mp4",
+      "poster": "/assets/spiral/audi-2.jpg",
+      "w": 480,
+      "h": 270
+    },
+    {
+      "id": "audi-3",
+      "src": "/assets/spiral/audi-3.mp4",
+      "poster": "/assets/spiral/audi-3.jpg",
+      "w": 480,
+      "h": 270
+    }
+  ],
+  "roomvy": [
+    {
+      "id": "roomvy-intro",
+      "src": "/assets/spiral/roomvy-intro.mp4",
+      "poster": "/assets/spiral/roomvy-intro.jpg",
+      "w": 480,
+      "h": 270
+    }
+  ],
+  "pathfinder-studios": [
+    {
+      "id": "pathfinder-reel",
+      "src": "/assets/spiral/pathfinder-reel.mp4",
+      "poster": "/assets/spiral/pathfinder-reel.jpg",
+      "w": 480,
+      "h": 270
+    }
+  ],
+  "pwc": [
+    {
+      "id": "playwrights-reel",
+      "src": "/assets/spiral/playwrights-reel.mp4",
+      "poster": "/assets/spiral/playwrights-reel.jpg",
+      "w": 480,
+      "h": 270
+    }
+  ]
+}

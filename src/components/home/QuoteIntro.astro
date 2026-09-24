@@ -1,17 +1,114 @@
 ---
-// Scroll-faded intro statement between hero and Recent Projects.
+// The statement between the hero and Recent Projects: the reel holds the left,
+// the line and the paragraph the right. Both arrive with the blur reveal.
+
+// "forgotten" fades out letter by letter on hover, the whole word gone in 2s —
+// each letter is its own span with a built-in transition-delay staggering it
+// across that 2s window, so one CSS transition (see .fade-letter below) does it.
+const FORGOTTEN = 'forgotten';
+const fadeLetters = [...FORGOTTEN]
+  .map((ch, i) => `<span class="fade-letter" style="transition-delay:${Math.round((i * 2000) / FORGOTTEN.length)}ms">${ch}</span>`)
+  .join('');
 ---
 
-<div class="w-layout-blockcontainer container-9 w-container">
-  <div class="wrapper">
-    <div class="div-block-10">
-      <div class="fade-target1" data-reveal>
-        <h3 class="who-description">It&#x27;s far more dangerous to be forgotten than to be debated. I make courage a KPI.<br /></h3>
-      </div>
-      <div class="fadetrigger"></div>
-      <div class="fade-target2" data-reveal>
-        <div class="paragraph">I’m a Creative Leader who builds teams, protects ideas, and ships work that scales. I’ve led global tech campaigns, grown creatives into leaders, and delivered award-winning work by pairing ambition with discipline.</div>
-      </div>
+<section class="quote-split">
+  <div class="quote-reel">
+    <video
+      src="/assets/reel-2026.mp4"
+      poster="/assets/reel-2026-poster.jpg"
+      autoplay
+      loop
+      muted
+      playsinline
+      preload="metadata"
+      aria-label="Showreel"
+      data-reel
+    ></video>
+  </div>
+
+  <div class="quote-copy">
+    <p class="as-h3 who-description" data-blur data-fade-trigger>
+      It&#x27;s far better to be debated than <span class="fade-word" data-fade-word set:html={fadeLetters} />.
+    </p>
+    <div class="paragraph" data-blur>
+      For over twelve years, Nick has directed award-winning campaigns for Qualcomm, Fluence, Audi,
+      Samsung and more.
     </div>
   </div>
-</div>
+</section>
+
+<script>
+  // Phone browsers only autoplay a video that is muted as a *property* (the attribute alone
+  // is not enough on iOS), and several of them refuse until it is actually on screen.
+  const reel = document.querySelector<HTMLVideoElement>('video[data-reel]');
+  if (reel) {
+    reel.muted = true;
+    reel.playsInline = true;
+    const play = () => reel.play().catch(() => {});
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      reel.removeAttribute('autoplay');
+    } else {
+      reel.addEventListener('loadeddata', play, { once: true });
+      // play while it is in view, rest when it is not — saves battery on a phone
+      new IntersectionObserver(
+        (entries) => { for (const e of entries) (e.isIntersecting ? play() : reel.pause()); },
+        { threshold: 0.2 }
+      ).observe(reel);
+      // if the browser still blocked it, the first touch anywhere is a good enough gesture
+      const nudge = () => { if (reel.paused) play(); };
+      document.addEventListener('touchstart', nudge, { once: true, passive: true });
+      document.addEventListener('click', nudge, { once: true });
+    }
+  }
+
+  // "forgotten" fades on hover — but the trigger is the whole headline, not the tight
+  // shape of the word itself (nine thin letters is a fussy target on their own).
+  // Leaving the headline resets it so it can be replayed.
+  const trigger = document.querySelector<HTMLElement>('[data-fade-trigger]');
+  const fadeWord = document.querySelector<HTMLElement>('[data-fade-word]');
+  if (trigger && fadeWord) {
+    trigger.addEventListener('pointerenter', () => fadeWord.classList.add('is-fading'));
+    trigger.addEventListener('pointerleave', () => fadeWord.classList.remove('is-fading'));
+  }
+</script>
+
+<style is:global>
+  .quote-split {
+    display: grid;
+    grid-template-columns: minmax(0, 44fr) minmax(0, 56fr);
+    align-items: stretch;
+    min-height: clamp(460px, 82svh, 860px);
+    background: var(--white, #f0efee);
+  }
+  .quote-split .quote-reel { position: relative; overflow: hidden; background: #1c1c1d; }
+  /* object-position: top so a container wider than the reel's own 3:4 crops from the
+     bottom, not symmetrically — the shots were framed with headroom, not footroom */
+  .quote-split .quote-reel video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; display: block; }
+  .quote-split .quote-copy {
+    display: flex; flex-direction: column; justify-content: center;
+    gap: clamp(18px, 3vh, 34px);
+    padding: clamp(40px, 8vh, 110px) clamp(24px, 5vw, 80px);
+  }
+  /* the statement and the paragraph keep the site's own type, just sized for the column */
+  .quote-split .who-description {
+    margin: 0; width: auto; max-width: 18ch; text-wrap: balance;
+    font-size: clamp(30px, 4.4vw, 68px); line-height: 1.04;
+  }
+  .quote-split .paragraph { width: auto; max-width: 46ch; align-self: flex-start; }
+
+  /* "forgotten": each letter is its own span (transition-delay set per-letter,
+     inline, in the frontmatter above) so one opacity transition plays as a
+     letter-by-letter wipe instead of the whole word fading as one block. */
+  .fade-word { display: inline-block; cursor: default; }
+  .fade-letter { display: inline-block; opacity: 1; transition: opacity 220ms linear; }
+  .fade-word.is-fading .fade-letter { opacity: 0; }
+
+  /* phones: the reel takes the full width on top, the statement sits under it */
+  @media (max-width: 767px) {
+    .quote-split { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+    .quote-split .quote-reel { aspect-ratio: 4 / 5; }
+    .quote-split .quote-copy { padding: clamp(28px, 6vh, 44px) clamp(20px, 6vw, 32px) clamp(40px, 8vh, 64px); gap: 16px; }
+    .quote-split .who-description { max-width: 16ch; font-size: clamp(30px, 9vw, 44px); }
+    .quote-split .paragraph { max-width: 40ch; font-size: 16px; line-height: 1.55; }
+  }
+</style>

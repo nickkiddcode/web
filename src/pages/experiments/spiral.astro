@@ -1,0 +1,350 @@
+---
+// EXPERIMENT — homepage "spiral of floating work". Not linked from anywhere, noindex.
+// One piece per project on the helix (src/scripts/spiral.js): its clip where there is one,
+// otherwise its hero image. CMS hook for later: let Keystatic pick that piece per project.
+import { getCollection } from 'astro:content';
+import { getImage, Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import videoManifest from '../../data/spiral-videos.json';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+
+type Item = {
+  slug: string; title: string; category: string; year: string;
+  src: string; w: number; h: number; video?: string;
+};
+const clips = videoManifest as Record<string, { id: string; src: string; poster: string; w: number; h: number }[]>;
+
+const items: Item[] = (
+  await Promise.all(
+    projects.map(async (p): Promise<Item | null> => {
+      const base = { slug: p.id, title: p.data.title, category: p.data.category, year: p.data.year };
+      // motion wins: a silent looping clip (scripts/spiral-clips.mjs), poster frame until it plays
+      const clip = clips[p.id]?.[0];
+      if (clip) return { ...base, src: clip.poster, w: clip.w, h: clip.h, video: clip.src };
+      if (!p.data.image1) return null;
+      const out = await getImage({ src: p.data.image1, width: 560, format: 'webp', quality: 72 });
+      return { ...base, src: out.src, w: Number(out.attributes.width), h: Number(out.attributes.height) };
+    })
+  )
+).filter((i): i is Item => Boolean(i));
+
+// Category pills, in the order the CMS defines them
+const categories = (['Campaign', 'UX', 'AI', 'Design', 'Branding'] as const).filter((c) => projects.some((p) => p.data.category === c)).map((c) => ({
+  name: c,
+  count: projects.filter((p) => p.data.category === c).length,
+}));
+// Same Spline mark as the home hero
+const SPLINE_URL = 'https://prod.spline.design/gPRWbBQLmX9stmVH/scene.splinecode';
+// the hero's NICK KIDD face, drawn onto the header band at the top of the helix
+const TITLE_FONT = '/assets/6955e699ac43dd49eb41e07d_ZalandoSansExpanded-VariableFont_wght.ttf';
+---
+
+<Base title="Work spiral (test) – Nick Kidd" bodyClass="body spiral-body" footer={false} noindex>
+  <main class="spiral" data-spiral>
+    <div class="spiral-views" role="group" aria-label="View">
+      <button type="button" data-view="spiral" aria-pressed="true" title="Spiral">
+        <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 8.6a1.1 1.1 0 1 1 1-1.8 2.9 2.9 0 1 1-4 3.4 5.1 5.1 0 1 1 8-5.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Spiral</span>
+      </button>
+      <button type="button" data-view="list" aria-pressed="false" title="List">
+        <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>List</span>
+      </button>
+    </div>
+
+    <div class="spiral-stage" id="spiral-stage" aria-hidden="true" data-spline-url={SPLINE_URL} data-title-font={TITLE_FONT}></div>
+
+    <!-- Real links: the keyboard / screen-reader path, and the fallback when WebGL is off or motion is reduced. -->
+    <ul class="spiral-list" aria-label="Selected work">
+      {items.map((it, i) => (
+        <li data-cat={it.category}>
+          <a href={`/projects/${it.slug}`} data-spiral-link={i}>
+            <img src={it.src} width={it.w} height={it.h} alt="" loading="lazy" />
+            <span class="spiral-list-title">{it.title}</span>
+            <span class="spiral-list-cat">{it.category}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <!-- List view: the /work grid. Also the page itself when WebGL is off or motion is reduced. -->
+    <section class="spiral-work portfolio-page-section" id="spiral-work" aria-label="All work">
+      <div class="portfolio-list">
+        {projects.map((p) => (
+          <div class="collection-item" data-cat={p.data.category}>
+            <a href={`/projects/${p.id}`} class="project-item">
+              <div class="projects-img-wrapp">
+                {p.data.image1 && (
+                  <Image src={p.data.image1} alt="" widths={[600, 1000, 1600]} sizes="(max-width: 767px) 100vw, 50vw" loading="lazy" class="aspect-video w-full object-cover" />
+                )}
+              </div>
+              <div class="project-text">
+                <h3 class="projects-title-page">{p.data.title}</h3>
+                <div class="slash">/</div>
+                <div class="proj-category">{p.data.category}</div>
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- The end of the spiral: the ask. -->
+    <aside class="spiral-cta" id="spiral-cta">
+      <h2>Hiring a creative leader?</h2>
+      <p>
+        <a href="mailto:contact@nickkidd.net">contact@nickkidd.net</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener">LinkedIn</a>
+        <span aria-hidden="true">·</span>
+        <a href="/assets/nick-kidd-resume.pdf">Resume (PDF)</a>
+      </p>
+    </aside>
+
+    <a class="spiral-chip" id="spiral-chip" href="#" tabindex="-1" aria-hidden="true">
+      <img alt="" width="44" height="44" />
+      <span class="spiral-chip-text">
+        <span class="spiral-chip-title"></span>
+        <span class="spiral-chip-meta"></span>
+      </span>
+    </a>
+
+    <div class="spiral-filter" id="spiral-filter">
+      <button type="button" class="spiral-filter-open" id="spiral-filter-open" aria-expanded="false" aria-controls="spiral-filter-menu">
+        <span class="spiral-filter-eyebrow">Filter</span>
+        <span class="spiral-filter-value" id="spiral-filter-value">All work</span>
+        <svg width="10" height="7" viewBox="0 0 10 7" aria-hidden="true"><path d="M1 5.5 5 1.5l4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="spiral-filter-menu" id="spiral-filter-menu" role="group" aria-label="Filter work by category" hidden>
+        <button type="button" data-filter="" aria-pressed="true">All work<span>{projects.length}</span></button>
+        {categories.map((c) => (
+          <button type="button" data-filter={c.name} aria-pressed="false">{c.name}<span>{c.count}</span></button>
+        ))}
+      </div>
+    </div>
+
+    <p class="spiral-hint" id="spiral-hint">Scroll, drag, or use the arrow keys</p>
+    <script type="application/json" id="spiral-data" set:html={JSON.stringify(items)} />
+  </main>
+
+  <script>
+    import '../../scripts/spiral.js';
+  </script>
+</Base>
+
+<style is:global>
+  .spiral { position: relative; }
+
+  /* fallback (no JS / reduced motion / no WebGL): the /work grid, as a normal page */
+  .spiral-stage, .spiral-list, .spiral-views { display: none; }
+  .spiral-work { padding-top: 24px; }
+  .spiral-work .project-item { overflow: hidden; }
+  .spiral-work .projects-img-wrapp img { transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .spiral-work .project-item:hover .projects-img-wrapp img { transform: scale(1.035); }
+  .spiral-chip, .spiral-hint, .spiral-filter { display: none; }
+  /* fallback: the ask closes the page */
+  .spiral-cta { padding: 64px 24px 96px; text-align: center; }
+  .spiral-cta h2 { margin: 0; font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.02em; }
+  .spiral-cta p { margin: 14px 0 0; font-size: 16px; color: rgba(28, 28, 29, 0.6); display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .spiral-cta a { color: var(--color-ink, #1c1c1d); text-underline-offset: 4px; }
+  .spiral-cta a:hover { color: var(--color-purple, #6100b9); }
+
+  /* live: full-bleed WebGL scene, links visually hidden but still focusable */
+  html.spiral-live { --filter-h: 64px; }
+  @media (min-width: 900px) { html.spiral-live { --filter-h: 96px; } }
+  html.spiral-live, html.spiral-live body { overflow: hidden; height: 100dvh; overscroll-behavior: none; }
+  html.spiral-live .spiral-stage {
+    display: block; position: fixed; inset: 0; z-index: 0;
+    background-color: #eff1f3;
+    background-image:
+      linear-gradient(rgba(28, 28, 29, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(28, 28, 29, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    background-position: center;
+    cursor: grab;
+  }
+  html.spiral-live .spiral-stage.is-dragging { cursor: grabbing; }
+  html.spiral-live .spiral-stage.is-link { cursor: pointer; }
+  html.spiral-live .spiral-stage { touch-action: none; }
+  /* three layers: far-side cards, the Spline mark, near-side cards */
+  html.spiral-live .spiral-stage > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+  /* the mark is sized by its box: 66% of the stage, centred in the hollow of the helix */
+  html.spiral-live .spiral-spline { position: absolute; inset: 17%; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
+  html.spiral-live .spiral-spline.is-on { opacity: 1; }
+  @media (max-width: 767px) { html.spiral-live .spiral-spline { inset: 20% -6%; } }
+  html.spiral-live .spiral-spline canvas { display: block; width: 100%; height: 100%; }
+  html.spiral-live .spiral-list {
+    position: fixed; left: 0; top: 0; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  html.spiral-live .header { z-index: 20; background: linear-gradient(180deg, rgba(239, 241, 243, 0.94) 0%, rgba(239, 241, 243, 0.6) 55%, rgba(239, 241, 243, 0) 100%); }
+
+  html.spiral-live .spiral-chip {
+    position: fixed; left: 50%; bottom: calc(var(--filter-h) + 10px); z-index: 10;
+    display: flex; align-items: center; gap: 14px;
+    width: max-content; padding: 8px 22px 8px 8px; border-radius: 18px;
+    background: #fff; color: var(--color-ink, #1c1c1d); text-decoration: none;
+    box-shadow: 0 1px 0 rgba(28,28,29,.05), 0 18px 48px rgba(28, 28, 29, 0.18);
+    opacity: 0; transform: translate(-50%, 14px); pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1);
+    max-width: calc(100vw - 32px);
+  }
+  html.spiral-live .spiral-chip.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .spiral-chip img { width: 44px; height: 44px; border-radius: 11px; object-fit: cover; background: #dfe2e6; flex: none; }
+  .spiral-chip-text { display: grid; gap: 2px; min-width: 0; }
+  .spiral-chip-title { font-weight: 600; font-size: 16px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .spiral-chip-meta { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-purple, #6100b9); font-weight: 600; }
+
+  html.spiral-live .spiral-hint {
+    display: block; position: fixed; left: 0; right: 0; text-align: center; top: calc(var(--views-top) + 52px + env(safe-area-inset-top, 0px)); z-index: 5; margin: 0; pointer-events: none;
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(28, 28, 29, 0.55);
+    transition: opacity 0.6s ease;
+  }
+  html.spiral-live .spiral-hint.is-off { opacity: 0; }
+
+
+
+  /* ---- the ask, at the end of the spiral ---- */
+  html.spiral-live .spiral-cta {
+    position: fixed; left: 50%; top: 50%; z-index: 13; width: min(560px, calc(100vw - 48px));
+    padding: 34px 36px 30px; border-radius: 18px; text-align: center; box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.92); border: 1px solid rgba(28, 28, 29, 0.09);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    box-shadow: 0 1px 0 rgba(28, 28, 29, 0.04), 0 30px 70px rgba(28, 28, 29, 0.16);
+    opacity: 0; transform: translate(-50%, calc(-50% + 26px)); pointer-events: none; visibility: hidden;
+    transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.5s;
+  }
+  html.spiral-live .spiral-cta.is-on {
+    opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; visibility: visible;
+    transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s;
+  }
+  html.spiral-live .spiral-cta h2 { font-size: clamp(24px, 2.6vw, 36px); line-height: 1.1; text-wrap: balance; }
+  html.spiral-live .spiral-cta p { font-size: 15px; }
+  html.spiral-view-list .spiral-cta { opacity: 0 !important; pointer-events: none !important; }
+
+  /* ---- filter: one button, the categories behind it ---- */
+  html.spiral-live .spiral-filter {
+    display: block; position: fixed; left: 50%; transform: translateX(-50%); z-index: 12;
+    bottom: calc(clamp(16px, 3vh, 28px) + env(safe-area-inset-bottom, 0px));
+  }
+  html.spiral-live .spiral-filter-open {
+    display: flex; align-items: baseline; gap: 10px; appearance: none; cursor: pointer; font: inherit;
+    padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(28, 28, 29, 0.12);
+    background: rgba(255, 255, 255, 0.78); color: var(--color-ink, #1c1c1d);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: 0 8px 28px rgba(28, 28, 29, 0.08);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  html.spiral-live .spiral-filter-open:hover { background: #fff; transform: translateY(-1px); }
+  html.spiral-live .spiral-filter-open svg { align-self: center; transition: transform 0.3s ease; }
+  html.spiral-live .spiral-filter.is-open .spiral-filter-open svg { transform: rotate(180deg); }
+  .spiral-filter-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(28, 28, 29, 0.45); }
+  .spiral-filter-value { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+  html.spiral-live .spiral-filter-menu {
+    position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%) translateY(8px);
+    transform-origin: bottom center;
+    width: 268px; max-height: min(52vh, 420px); overflow-y: auto; overscroll-behavior: contain;
+    display: grid; gap: 2px; padding: 8px; border-radius: 16px;
+    background: rgba(255, 255, 255, 0.94); border: 1px solid rgba(28, 28, 29, 0.09);
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    box-shadow: 0 24px 60px rgba(28, 28, 29, 0.18);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.spiral-live .spiral-filter-menu[hidden] { display: grid; }
+  html.spiral-live .spiral-filter.is-open .spiral-filter-menu { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  html.spiral-live .spiral-filter-menu button {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    appearance: none; border: 0; background: none; cursor: pointer; font: inherit; text-align: left;
+    padding: 10px 12px; border-radius: 10px; color: var(--color-ink, #1c1c1d);
+    font-size: 13px; font-weight: 500; transition: background-color 0.15s ease;
+  }
+  html.spiral-live .spiral-filter-menu button span { font-size: 11px; font-variant-numeric: tabular-nums; color: rgba(28, 28, 29, 0.42); }
+  html.spiral-live .spiral-filter-menu button:hover { background: rgba(28, 28, 29, 0.05); }
+  html.spiral-live .spiral-filter-menu button[aria-pressed="true"] { background: var(--color-ink, #1c1c1d); color: #fff; font-weight: 600; }
+  html.spiral-live .spiral-filter-menu button[aria-pressed="true"] span { color: rgba(255, 255, 255, 0.6); }
+  html.spiral-live .spiral-filter button:focus-visible, html.spiral-live .spiral-filter-open:focus-visible { outline: 2px solid var(--color-purple, #6100b9); outline-offset: 2px; }
+
+  /* desktop: filter in the bottom right corner, its menu opening up from that corner */
+  @media (min-width: 900px) {
+    html.spiral-live .spiral-filter { left: auto; right: 40px; transform: none; }
+    html.spiral-live .spiral-filter-menu { left: auto; right: 0; transform: translateY(8px); }
+    html.spiral-live .spiral-filter.is-open .spiral-filter-menu { transform: translateY(0); }
+    /* with the corner free, the chip sits low and centred again */
+    html.spiral-live .spiral-chip { bottom: calc(clamp(16px, 3vh, 28px) + 6px); }
+  }
+
+  /* ---- Spiral / List toggle: a small segmented pill, centred in the nav row ---- */
+  html.spiral-live { --views-top: 36px; }
+  @media (max-width: 767px) { html.spiral-live { --views-top: 142px; } }
+  html.spiral-live .spiral-views {
+    position: fixed; left: 50%; top: calc(var(--views-top) + env(safe-area-inset-top, 0px)); z-index: 25;
+    transform: translateX(-50%);
+    display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(28, 28, 29, 0.1);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: 0 8px 28px rgba(28, 28, 29, 0.08);
+  }
+  /* the ink thumb slides under the active label */
+  html.spiral-live .spiral-views::before {
+    content: ''; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
+    border-radius: 999px; background: var(--color-ink, #1c1c1d);
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  html.spiral-view-list .spiral-views::before { transform: translateX(100%); }
+  html.spiral-live .spiral-views button {
+    position: relative; appearance: none; border: 0; background: none; cursor: pointer; font: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 6px 14px; border-radius: 999px; min-width: 0;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(28, 28, 29, 0.55); transition: color 0.35s ease;
+  }
+  html.spiral-live .spiral-views svg { flex: none; }
+  /* phones: the two icons carry it */
+  @media (max-width: 767px) {
+    html.spiral-live .spiral-views button { padding: 8px 16px; }
+    html.spiral-live .spiral-views button span {
+      position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    html.spiral-live .spiral-views svg { width: 17px; height: 17px; }
+  }
+  html.spiral-live .spiral-views button:hover { color: var(--color-ink, #1c1c1d); }
+  html.spiral-live .spiral-views button[aria-pressed="true"] { color: #fff; }
+  html.spiral-live .spiral-views button:focus-visible { outline: 2px solid var(--color-purple, #6100b9); outline-offset: 2px; }
+
+  /* ---- List view: the /work grid over the page, staggering in as the helix spins away ---- */
+  html.spiral-live .spiral-work {
+    position: fixed; inset: 0; z-index: 8; overflow-y: auto; overscroll-behavior: contain;
+    padding: 132px 0 calc(var(--filter-h) + 24px);
+    background-color: rgba(239, 241, 243, 0);
+    visibility: hidden; pointer-events: none;
+    transition: background-color 0.45s ease, visibility 0s linear 0.6s;
+  }
+  @media (max-width: 767px) { html.spiral-live .spiral-work { padding-top: 196px; } }
+  html.spiral-view-list .spiral-work {
+    visibility: visible; pointer-events: auto; background-color: var(--white, #f0efee);
+    transition: background-color 0.5s ease 0.1s, visibility 0s;
+  }
+  html.spiral-live .spiral-work .collection-item {
+    opacity: 0; transform: translateY(56px) scale(0.97); filter: blur(10px);
+    transition: opacity 0.3s ease, transform 0.35s ease, filter 0.3s ease;
+    transition-delay: calc(min(var(--i, 0), 6) * 25ms);
+  }
+  html.spiral-live .spiral-work.is-in .collection-item {
+    opacity: 1; transform: none; filter: none;
+    transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s ease;
+    transition-delay: calc(180ms + min(var(--i, 0), 10) * 70ms);
+  }
+  /* the helix, hint, chip and mark step back while the list is up */
+  html.spiral-view-list .spiral-spline { opacity: 0 !important; transform: scale(0.7) rotate(-8deg); transition: opacity 0.35s ease, transform 0.5s ease-in; }
+  html.spiral-view-list .spiral-hint { opacity: 0; }
+  /* in the list, the pills sit on a soft fade so they read over the grid */
+  html.spiral-live .spiral-filter::before {
+    content: ''; position: fixed; left: 0; right: 0; bottom: 0; height: calc(var(--filter-h) + 28px); z-index: -1; pointer-events: none;
+    background: linear-gradient(0deg, var(--white, #f0efee) 45%, rgba(240, 239, 238, 0));
+    opacity: 0; transition: opacity 0.4s ease;
+  }
+  html.spiral-view-list .spiral-filter::before { opacity: 1; }
+  html.spiral-view-list .spiral-chip { opacity: 0 !important; pointer-events: none !important; }
+</style>

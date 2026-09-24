@@ -1,91 +1,209 @@
 ---
-// "Recent Projects" — card grid (hidden on the live site, markup preserved) +
-// full-bleed feature list, both inside the footer.projects wrapper as in the
-// source. Driven by the Projects collection so Keystatic edits flow through.
+// "Recent Projects" — the top five as full-bleed features, then the rest as lines.
+// Driven by the Projects collection so Keystatic edits flow through.
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
+import spiralVideos from '../../data/spiral-videos.json';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const arrow = '/assets/6711338183204ff65e11a115_arrow.svg';
+const featured = projects.slice(0, 5);
+const rest = projects.slice(5);
+
+// the hover preview on the list below the features: one small, optimized still per project
+const peek = Object.fromEntries(
+  await Promise.all(
+    rest.map(async (p) => [
+      p.id,
+      p.data.image1 ? (await getImage({ src: p.data.image1, width: 720, format: 'webp' })).src : null,
+    ]),
+  ),
+);
+
+// the card's own video, separate from `video1` (which drives the project page's
+// hero and may be a curated embed there) — the CMS field wins when set, else the
+// spiral experiment's first clip for that project, if it has one
+const cardVideo = (p: (typeof projects)[number]) =>
+  p.data.video1 ?? (spiralVideos as Record<string, { src: string }[]>)[p.id]?.[0]?.src ?? null;
 ---
 
 <footer class="projects">
   <div class="div-block-50">
-    <h1 class="heading-30">Recent Projects</h1>
-    <a href="/work" class="link-block-3 w-inline-block">
-      <div class="text-block-19">All Projects</div>
-      <img src={arrow} loading="lazy" alt="" />
-    </a>
-  </div>
-
-  <div class="collection-list-wrapper-2 w-dyn-list">
-    <div role="list" class="w-dyn-items">
-      {projects.map((p) => (
-        <div role="listitem" class="collection-item-3 w-dyn-item" data-project-card>
-          <div class="div-block-34">
-            <a href={`/projects/${p.id}`} class="link-block w-inline-block" aria-label={p.data.title}></a>
-            <div class="projecttext">
-              <div class="div-block-36">
-                <div class="text-block-10">{p.data.category}</div>
-                <div class="text-block-12">| </div>
-                <div class="text-block-11">{p.data.year}</div>
-              </div>
-              <h4 class="heading-28">{p.data.title}</h4>
-              {p.data.summary && <p class="projectsummary" data-card-reveal>{p.data.summary}</p>}
-              <div class="div-block-40" data-card-reveal>
-                <div class="div-block-37">
-                  <div class="text-block-13">View Project</div>
-                  <img src={arrow} loading="lazy" alt="" />
-                </div>
-                <div class="linediv" data-card-line></div>
-              </div>
-            </div>
-            <div class="div-block-39" data-card-overlay></div>
-            {p.data.image1 && (
-              <Image src={p.data.image1} alt={p.data.title} class="image-15" widths={[800, 1280]} sizes="100vw" loading="lazy" />
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
+    <h2 class="as-h1 heading-30">Recent Projects</h2>
   </div>
 
   <div class="collection-list-wrapper-3 w-dyn-list">
     <div role="list" class="collection-list-2 w-dyn-items">
-      {projects.map((p) => (
-        <div role="listitem" class="collection-item-4 w-dyn-item">
+      {featured.map((p) => (
+        <div role="listitem" class="collection-item-4 w-dyn-item" data-blur>
           <a href={`/projects/${p.id}`} class="link-block-2 w-inline-block" aria-label={p.data.title}></a>
-          <div class="div-block-44" data-feature-reveal>
-            {p.data.image1 && (
-              <Image src={p.data.image1} alt="" class="image1" widths={[800, 1280, 1920]} sizes="100vw" loading="lazy" />
+          <div class="div-block-44">
+            {cardVideo(p) ? (
+              <video class="image1" src={cardVideo(p)!} autoplay loop muted playsinline aria-hidden="true" />
+            ) : (
+              p.data.image1 && (
+                <Image src={p.data.image1} alt={`${p.data.title} — ${p.data.category.toLowerCase()} work for ${p.data.client}`} class="image1" widths={[800, 1280, 1920]} sizes="100vw" loading="lazy" />
+              )
             )}
             {p.data.image2 && (
               <Image src={p.data.image2} alt="" class="image2" widths={[800, 1280, 1920]} sizes="100vw" loading="lazy" />
             )}
           </div>
           <div class="div-block-46"></div>
-          <div class="div-block-41" data-feature-reveal>
-            <div class="div-block-45">
-              <div class="div-block-36">
-                <div class="projdescriptionhead white">{p.data.category}</div>
-                <div class="projdescriptionhead white">| </div>
-                <div class="projdescriptionhead white">{p.data.year}</div>
+          <div class="div-block-41">
+            <div class="div-block-45 proj-feat-body">
+              <h3 class="as-h1 heading-29 proj-feat-title">{p.data.title}</h3>
+              <div class="proj-feat-meta">
+                <span class="projdescriptionhead white">{p.data.category}</span>
+                <span class="projdescriptionhead white">{p.data.client}</span>
               </div>
-              <h1 class="heading-29">{p.data.title}</h1>
-              <div class="div-block-40">
-                <div class="div-block-37">
-                  <div class="text-block-13">View Project</div>
-                  <img src={arrow} loading="lazy" alt="" data-feature-arrow />
-                </div>
-                <div class="linediv" data-feature-line></div>
-              </div>
-            </div>
-            <div class="div-block-47">
-              <p class="paragraph-9">{p.data.summary}</p>
             </div>
           </div>
         </div>
       ))}
     </div>
   </div>
+
+  <!-- everything else, as lines -->
+  <ul class="proj-list">
+    {rest.map((p) => (
+      <li data-blur>
+        <a href={`/projects/${p.id}`} data-peek={peek[p.id] ?? undefined}>
+          <span class="proj-list-title">{p.data.title}</span>
+          <span class="proj-list-cat">{p.data.category}</span>
+          <span class="proj-list-client">{p.data.client}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  {/* the still that rides under the cursor while a line is hovered */}
+  <div class="proj-peek" aria-hidden="true"><img alt="" /></div>
 </footer>
+
+<script>
+  // Hovering a line in the list shows that project's still under the cursor, at half the
+  // size of a featured thumbnail (measured live, so it tracks the layout at any width).
+  // Mouse / trackpad only — on touch the line is just a link.
+  const peekBox = document.querySelector<HTMLElement>('.proj-peek');
+  const peekImg = peekBox?.querySelector('img');
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.proj-list a[data-peek]')];
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (peekBox && peekImg && links.length && fine) {
+    const ref = document.querySelector<HTMLElement>('.collection-item-4 .image1');
+    let x = 0, y = 0, tx = 0, ty = 0, raf = 0, on = false;
+
+    const follow = () => {
+      x += (tx - x) * 0.2;
+      y += (ty - y) * 0.2;
+      peekBox.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+      raf = on || Math.abs(tx - x) > 0.5 || Math.abs(ty - y) > 0.5 ? requestAnimationFrame(follow) : 0;
+    };
+    const size = () => {
+      const w = (ref?.offsetWidth || 640) / 2;
+      const h = (ref?.offsetHeight || 360) / 2;
+      peekBox.style.width = `${w}px`;
+      peekBox.style.height = `${h}px`;
+    };
+
+    for (const a of links) {
+      a.addEventListener('pointerenter', (e) => {
+        peekImg.src = a.dataset.peek!;
+        if (!on) { x = tx = e.clientX; y = ty = e.clientY; size(); }
+        on = true;
+        peekBox.classList.add('is-on');
+        if (!raf) raf = requestAnimationFrame(follow);
+      });
+      a.addEventListener('pointerleave', () => { on = false; peekBox.classList.remove('is-on'); });
+    }
+    window.addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; }, { passive: true });
+
+    // warm the cache so the first hover doesn't flash an empty frame
+    const warm = () => links.forEach((a) => { const i = new Image(); i.src = a.dataset.peek!; });
+    'requestIdleCallback' in window ? requestIdleCallback(warm) : setTimeout(warm, 1500);
+  }
+</script>
+
+<style is:global>
+  /* "Recent Projects" reads a size down from the Webflow default (48–65px on desktop) */
+  .div-block-50 .heading-30 { font-size: clamp(26px, 3vw, 40px); }
+
+  /* the category | client label on each feature: the Webflow default blends 50%-opacity
+     white into whatever photo is behind it, which goes unreadable on a light shot.
+     A solid light gray plus a soft shadow stays legible over any thumbnail. */
+  .collection-item-4 .projdescriptionhead.white {
+    opacity: 1;
+    color: #c7cad0;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  }
+
+  /* the text block under each feature: title and category/client used to sit in a
+     33%-wide column meant to leave room for a description beside it. That
+     description is gone, so the column was wasting most of the row and
+     wrapping the title onto a couple of words a line. Two columns instead —
+     the title gets the room, the meta sits to the right — one column on mobile. */
+  .div-block-45.proj-feat-body {
+    width: 100%;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: clamp(16px, 4vw, 40px);
+  }
+  .proj-feat-title {
+    width: auto;
+    max-width: 34ch;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.05;
+  }
+  .proj-feat-meta {
+    display: flex;
+    flex: none;
+    gap: clamp(10px, 1.4vw, 18px);
+    white-space: nowrap;
+    padding-top: 0.4em;
+  }
+  @media (max-width: 767px) {
+    .div-block-45.proj-feat-body { flex-flow: column; align-items: flex-start; gap: 8px; }
+    .proj-feat-title { max-width: 100%; font-size: clamp(24px, 6.4vw, 32px); }
+  }
+
+  /* the run of lines under the five features — the section around it is black */
+  .proj-list {
+    list-style: none;
+    margin: clamp(48px, 8vh, 96px) 0 0;
+    padding: 0 clamp(24px, 5vw, 80px) clamp(40px, 7vh, 90px);
+    border-top: 0;
+  }
+  .proj-list li:first-child a { border-top: 1px solid rgba(239, 241, 243, 0.16); }
+  .proj-list a {
+    display: grid; grid-template-columns: 1fr auto auto; gap: clamp(12px, 2vw, 32px); align-items: baseline;
+    padding: clamp(14px, 2vh, 22px) 0; border-bottom: 1px solid rgba(239, 241, 243, 0.16);
+    text-decoration: none; color: #eff1f3;
+  }
+  .proj-list a:hover .proj-list-title { color: #b98cf0; }
+  .proj-list-title { font-size: clamp(16px, 1.8vw, 24px); font-weight: 500; transition: color 0.2s ease; }
+  .proj-list-cat, .proj-list-client {
+    font-size: clamp(9px, 0.8vw, 10px); letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(239, 241, 243, 0.72);
+  }
+  /* the hover still: fixed to the viewport, centered on the cursor, never in the way of it */
+  .proj-peek {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    scale: 0.85;
+    transition: opacity 0.25s ease, scale 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .proj-peek.is-on { opacity: 1; scale: 1; }
+  .proj-peek img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  @media (max-width: 767px) {
+    .proj-list { border-top-width: 1px; }
+    .proj-list a { grid-template-columns: 1fr auto; }
+    .proj-list-client { display: none; }
+  }
+</style>

@@ -1,0 +1,11 @@
+# nickkidd.net — portfolio of creative director Nick Kidd.
+# Search engines and AI agents (including recruiters' research assistants) are welcome
+# everywhere public. A plain-text brief for AI agents lives at /llms.txt.
+
+User-agent: *
+Allow: /
+Disallow: /keystatic
+Disallow: /api/
+Disallow: /experiments/
+
+Sitemap: https://www.nickkidd.net/sitemap.xml

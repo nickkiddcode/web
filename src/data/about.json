@@ -143,12 +143,56 @@
     {
       "cls": "text-span-8",
       "name": "Nutanix"
+    },
+    {
+      "cls": "",
+      "name": "Fluence Energy"
+    },
+    {
+      "cls": "",
+      "name": "HP"
+    },
+    {
+      "cls": "",
+      "name": "F5"
+    },
+    {
+      "cls": "",
+      "name": "Software AG"
+    },
+    {
+      "cls": "",
+      "name": "Poly"
+    },
+    {
+      "cls": "",
+      "name": "Citrix"
     }
   ],
   "awards": [
     {
       "year": "2026",
       "award": "Silver Addy",
+      "detail": "Transmission"
+    },
+    {
+      "year": "2026",
+      "award": "Bronze, The Drum Awards",
+      "detail": "Transmission"
+    },
+    {
+      "year": "2026",
+      "award": "Gold B2 Award",
+      "detail": "Transmission"
+    },
+    {
+      "year": "2026",
+      "award": "Gold Reggie",
+      "detail": "Transmission"
+    },
+    {
+      "year": "2026",
+      "award": "Silver Telly",
       "detail": "Transmission"
     },
     {
@@ -180,6 +224,32 @@
       "year": "2018",
       "award": "Gold DSVC Award",
       "detail": "TracyLocke"
+    }
+  ],
+  "strengths": [
+    {
+      "name": "B2B",
+      "detail": "Tech storytelling that doesn’t feel like B2B — for Qualcomm, Fluence, HPE and Nutanix."
+    },
+    {
+      "name": "B2C",
+      "detail": "Award-winning campaigns and retail for Audi, Samsung, Pizza Hut and Pepsi."
+    },
+    {
+      "name": "UX",
+      "detail": "Websites, SaaS products and behavioral design that make complex systems feel simple."
+    },
+    {
+      "name": "AI",
+      "detail": "AI creative engineering and AI-enabled workflows, from proof of concept to production."
+    },
+    {
+      "name": "Operations",
+      "detail": "Intake systems, scalable workflows and department structures that let teams do their best work."
+    },
+    {
+      "name": "Creative Strategy",
+      "detail": "Finding the story at the core of a brand — then building everything from it."
     }
   ]
 }

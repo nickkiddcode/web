@@ -1,58 +1,217 @@
 ---
+// Work — every project, in the homepage's language: a big title with the count in the brand
+// mesh, category filters, and a staggered two-column run of cards. Each card holds its
+// still; where a project has a moving clip, it plays on hover. Order and categories come
+// straight from the Projects collection, so Keystatic edits land here on the next build.
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import Cursor from '../components/home/Cursor.astro';
+import spiralVideos from '../data/spiral-videos.json';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const CATEGORIES = ['Campaign', 'UX', 'AI', 'Design', 'Branding'] as const;
+const counts = Object.fromEntries(CATEGORIES.map((c) => [c, projects.filter((p) => p.data.category === c).length]));
+
+// the hover clip: the CMS video when set, else the spiral experiment's first clip, if any
+const clip = (p: (typeof projects)[number]) =>
+  p.data.video1 ?? (spiralVideos as Record<string, { src: string }[]>)[p.id]?.[0]?.src ?? null;
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<Base title="Work – Nick Kidd" bodyClass="body-4">
-  <Cursor />
-  <section class="portfolio-section portfolio-page-section">
-    <div class="moving-text-loop">
-      <div class="moving-text-container">
-        <div class="moving-text" data-marquee>
-          <span>
-            Creative direction.Storytelling.Web design.User experience.product design.Social Media.Operations.Shopper
-            marketing.Email marketing.Product Design.Video Production.copywriting.midjourney.Branding and
-            Identity.illustration.image retouching.tech trends.pitch decks.Wireframing.
-          </span>
-          <span aria-hidden="true">
-            Creative direction.Storytelling.Web design.User experience.product design.Social Media.Operations.Shopper
-            marketing.Email marketing.Product Design.Video Production.copywriting.midjourney.Branding and
-            Identity.illustration.image retouching.tech trends.pitch decks.Wireframing.
-          </span>
-        </div>
+<Base
+  title="Work — Nick Kidd, Creative Director"
+  description="Selected campaigns, brand identities, UX and AI work by creative director Nick Kidd — for Qualcomm, Snapdragon, Fluence, Audi, the W.K. Kellogg Foundation and more."
+>
+  <main class="wk">
+    <section class="wk-hero">
+      <div class="wk-meta" data-blur>
+        <span>Selected work</span>
+        <span>{projects.length} projects · 2015–{new Date().getFullYear()}</span>
       </div>
-    </div>
-    <div class="w-layout-blockcontainer main-container w-container"></div>
-    <div class="portfolio-wrapper w-dyn-list">
-      <div role="list" class="portfolio-list w-dyn-items">
-        {projects.map((p) => (
-          <div role="listitem" class="collection-item w-dyn-item">
-            <a href={`/projects/${p.id}`} class="project-item w-inline-block" data-reveal>
-              <div class="projects-img-wrapp">
-                {p.data.image1 && (
-                  <Image
-                    src={p.data.image1}
-                    alt=""
-                    widths={[600, 1000, 1600]}
-                    sizes="(max-width: 767px) 100vw, 50vw"
-                    loading="lazy"
-                    class="aspect-video w-full object-cover"
-                  />
-                )}
-              </div>
-              <div class="project-text">
-                <h3 class="projects-title-page">{p.data.title}</h3>
-                <div class="slash">/</div>
-                <div class="proj-category">{p.data.category}</div>
-              </div>
-            </a>
-          </div>
+      <h1 class="wk-title" data-blur>
+        Work<sup class="wk-count mesh mesh-text">{pad(projects.length)}</sup>
+        <span class="sr-only"> — selected projects by creative director Nick Kidd</span>
+      </h1>
+
+      <div class="wk-filters" role="group" aria-label="Filter by category" data-blur>
+        <button type="button" class="wk-filter is-on" data-filter="all" aria-pressed="true">
+          All <span>{pad(projects.length)}</span>
+        </button>
+        {CATEGORIES.filter((c) => counts[c]).map((c) => (
+          <button type="button" class="wk-filter" data-filter={c} aria-pressed="false">
+            {c} <span>{pad(counts[c])}</span>
+          </button>
         ))}
       </div>
-    </div>
-  </section>
+    </section>
+
+    <ul class="wk-grid" data-grid>
+      {projects.map((p, i) => (
+        <li class="wk-card" data-cat={p.data.category} data-blur>
+          <a href={`/projects/${p.id}`}>
+            <div class="wk-media">
+              {p.data.image1 && (
+                <Image
+                  src={p.data.image1}
+                  alt={`${p.data.title} — ${p.data.category.toLowerCase()} work for ${p.data.client}`}
+                  widths={[600, 1000, 1500]}
+                  sizes="(max-width: 767px) 100vw, 48vw"
+                  loading={i < 2 ? 'eager' : 'lazy'}
+                />
+              )}
+              {clip(p) && <video data-src={clip(p)!} muted loop playsinline preload="none" aria-hidden="true" />}
+            </div>
+            <div class="wk-info">
+              <h2 class="wk-name">{p.data.title}</h2>
+              <p class="wk-tags">
+                <span>{p.data.category}</span>
+                {p.data.client && <span>{p.data.client}</span>}
+                {p.data.year && <span>{p.data.year}</span>}
+              </p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
 </Base>
+
+<script>
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+  const cards = [...document.querySelectorAll<HTMLElement>('.wk-card')];
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('.wk-filter')];
+
+  // the stagger: every second *visible* card drops down a step, so the run stays
+  // staggered whatever the filter leaves showing
+  const restagger = () => {
+    let k = 0;
+    for (const c of cards) {
+      if (c.hidden) continue;
+      c.classList.toggle('is-low', k % 2 === 1);
+      k++;
+    }
+  };
+  restagger();
+
+  // filters: fade the grid out, swap what's showing, fade back in
+  let busy = false;
+  for (const b of buttons) {
+    b.addEventListener('click', () => {
+      if (busy || b.classList.contains('is-on')) return;
+      busy = true;
+      for (const o of buttons) { o.classList.toggle('is-on', o === b); o.setAttribute('aria-pressed', String(o === b)); }
+      grid?.classList.add('is-swapping');
+      setTimeout(() => {
+        const f = b.dataset.filter;
+        for (const c of cards) c.hidden = f !== 'all' && c.dataset.cat !== f;
+        for (const c of cards) c.classList.add('is-in'); // don't make re-shown cards wait on the scroll reveal
+        restagger();
+        grid?.classList.remove('is-swapping');
+        busy = false;
+      }, 320);
+    });
+  }
+
+  // hover clips: load on first hover, play while hovered, rest when not (mouse / trackpad only)
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    for (const c of cards) {
+      const v = c.querySelector<HTMLVideoElement>('video[data-src]');
+      if (!v) continue;
+      const a = c.querySelector('a')!;
+      a.addEventListener('pointerenter', () => {
+        if (!v.src) v.src = v.dataset.src!;
+        v.play().then(() => c.classList.add('is-playing')).catch(() => {});
+      });
+      a.addEventListener('pointerleave', () => { v.pause(); c.classList.remove('is-playing'); });
+    }
+  }
+</script>
+
+<style>
+  .wk {
+    --ink: #1c1c1d;
+    --muted: rgba(28, 28, 29, 0.56);
+    --rule: rgba(28, 28, 29, 0.14);
+    --gutter: clamp(20px, 4.4vw, 64px);
+    --display: 'Zalandosansexpanded Variablefont Wght', Arial, sans-serif;
+    color: var(--ink);
+    background: var(--white, #f0efee);
+    font-family: 'Work Sans', sans-serif;
+    padding-bottom: clamp(96px, 16vh, 200px);
+  }
+  .wk p, .wk h1, .wk h2 { margin: 0; color: inherit; }
+
+  /* ---------- title + filters ---------- */
+  .wk-hero { padding: clamp(40px, 9vh, 120px) var(--gutter) clamp(40px, 6vh, 72px); }
+  .wk-meta {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding-bottom: 18px; margin-bottom: clamp(24px, 4vh, 48px); border-bottom: 1px solid var(--rule);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  }
+  .wk-title {
+    font-family: var(--display); font-weight: 300;
+    font-size: clamp(88px, 21vw, 360px); line-height: 0.82; letter-spacing: -0.045em;
+  }
+  .wk-count {
+    font-size: 0.24em; font-weight: 500; letter-spacing: -0.02em;
+    vertical-align: top; position: relative; top: 0.35em; margin-left: 0.12em;
+  }
+  .wk-filters {
+    display: flex; flex-wrap: wrap; gap: 8px 10px;
+    margin-top: clamp(32px, 5vh, 64px);
+  }
+  .wk-filter {
+    font-family: 'Work Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.06em;
+    padding: 10px 16px; border: 1px solid var(--rule); border-radius: 999px;
+    background: transparent; color: var(--ink); cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .wk-filter span { margin-left: 4px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; transition: color 0.25s ease; }
+  .wk-filter:hover { border-color: var(--ink); }
+  .wk-filter.is-on { background: var(--ink); border-color: var(--ink); color: var(--white, #f0efee); }
+  .wk-filter.is-on span { color: rgba(240, 239, 238, 0.6); }
+  .wk-filter:focus-visible { outline: 2px solid var(--purple, #6100b9); outline-offset: 3px; }
+
+  /* ---------- the staggered run ---------- */
+  .wk-grid {
+    list-style: none; margin: 0; padding: 0 var(--gutter);
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(20px, 3.4vw, 56px); row-gap: clamp(56px, 9vh, 120px);
+    transition: opacity 0.3s ease;
+  }
+  .wk-grid.is-swapping { opacity: 0; }
+  .wk-card.is-low { transform: translateY(clamp(80px, 16vh, 220px)); }
+  .wk-card.is-low[data-blur]:not(.is-in) { transform: translateY(calc(clamp(80px, 16vh, 220px) + 26px)); }
+  .wk-card a { display: block; color: inherit; text-decoration: none; }
+
+  .wk-media { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: #1c1c1d; }
+  .wk-media :global(img), .wk-media video {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  }
+  .wk-media video { opacity: 0; }
+  .wk-card.is-playing .wk-media video { opacity: 1; }
+  .wk-card a:hover .wk-media :global(img), .wk-card a:hover .wk-media video { transform: scale(1.04); }
+
+  .wk-info {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+    padding-top: 18px;
+  }
+  .wk-name {
+    font-family: var(--display); font-size: clamp(22px, 2.3vw, 38px); line-height: 1.05; letter-spacing: -0.02em;
+    font-variation-settings: 'wght' 350; transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
+  }
+  .wk-card a:hover .wk-name { font-variation-settings: 'wght' 620; color: var(--purple, #6100b9); }
+  .wk-tags {
+    display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 14px; flex: none; max-width: 45%;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+
+  @media (max-width: 767px) {
+    .wk-grid { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
+    .wk-card.is-low, .wk-card.is-low[data-blur]:not(.is-in) { transform: none; }
+    .wk-info { flex-direction: column; gap: 8px; }
+    .wk-tags { justify-content: flex-start; max-width: none; }
+    .wk-meta span:last-child { text-align: right; }
+  }
+</style>

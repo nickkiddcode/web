@@ -55,31 +55,23 @@ if (!reducedMotion) {
   else setTimeout(loadSpline, 2000);
 }
 
-// ---------- hero entrance (after the loader clears at ~2s on first paint) ----------
-const heroDelay = document.querySelector('.loader') && !reducedMotion ? 2.1 : 0;
+// ---------- hero entrance ----------
+// With the homepage preloader up, the entrance waits for it: the preloader fires
+// nk:preloaded while it still covers the page (so the start state is set out of sight),
+// then wipes up — the small delay lets the wipe clear the name before it rises.
+// No preloader (a return visit, or any other page) → straight in.
+const heroIn = (delay) => {
+  gsap.from('[data-hero-rise]', { opacity: 0, y: 25, duration: 0.9, ease: 'power2.out', stagger: 0.12, delay });
+  gsap.from('[data-hero-fade]', { opacity: 0, duration: 0.9, ease: 'power1.out', stagger: 0.1, delay: delay + 0.25 });
+  gsap.from('[data-hero-scale]', { opacity: 0, scale: 0.9, duration: 1.1, ease: 'power2.out', delay });
+};
 if (!reducedMotion) {
-  gsap.from('[data-hero-rise]', {
-    opacity: 0,
-    y: 25,
-    duration: 0.9,
-    ease: 'power2.out',
-    stagger: 0.12,
-    delay: heroDelay,
-  });
-  gsap.from('[data-hero-fade]', {
-    opacity: 0,
-    duration: 0.9,
-    ease: 'power1.out',
-    stagger: 0.1,
-    delay: heroDelay + 0.25,
-  });
-  gsap.from('[data-hero-scale]', {
-    opacity: 0,
-    scale: 0.9,
-    duration: 1.1,
-    ease: 'power2.out',
-    delay: heroDelay,
-  });
+  if (document.documentElement.classList.contains('is-preloading')) {
+    window.__lenis?.stop();
+    window.addEventListener('nk:preloaded', () => { heroIn(0.45); window.__lenis?.start(); }, { once: true });
+  } else {
+    heroIn(0);
+  }
 }
 
 // ---------- scroll reveals: fade in + rise, once ----------

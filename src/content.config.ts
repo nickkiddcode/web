@@ -11,7 +11,7 @@ const projects = defineCollection({
       order: z.number(),
       client: z.string().default(''),
       role: z.string().default(''),
-      category: z.string().default(''),
+      category: z.enum(['Campaign', 'UX', 'AI', 'Design', 'Branding']),
       year: z.string().default(''),
       summary: z.string().default(''),
       image1: image().nullable().default(null),
@@ -30,6 +30,7 @@ const projects = defineCollection({
       overview: z.string().default(''),
       approach: z.string().default(''),
       outcome: z.string().default(''),
+      password: z.string().nullable().default(null),
     }),
 });
 
