@@ -34,30 +34,22 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </>
         ))}
       </h1>
-      <p class="ab-lede" data-blur>{about.intro}</p>
-    </section>
-
-    {/* ---------- the proof, and who, right now ---------- */}
-    <section class="ab-band" aria-label="Results">
-      <figure class="ab-portrait" data-blur>
-        <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" />
-      </figure>
-      <div class="ab-band-copy">
-        <dl class="ab-stats" data-blur>
-          {about.stats.map((st) => (
-            <div class="ab-stat">
-              <dt class="ab-stat-num">{st.value}</dt>
-              <dd class="ab-stat-label">{st.label}</dd>
+      <div class="ab-intro">
+        <figure class="ab-portrait" data-blur>
+          <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" />
+        </figure>
+        <div class="ab-intro-copy">
+          <p class="ab-lede" data-blur>{about.intro}</p>
+          <p class="ab-proof-line" data-blur>
+            {about.proof.map((line, i) => (<>{i > 0 && <br />}{line}</>))}
+          </p>
+          <div class="ab-now" data-blur>
+            <p class="ab-label">Currently</p>
+            <p class="ab-now-role">{current.title}, {current.company}</p>
+            <div class="ab-now-links">
+              <a href="/assets/nick-kidd-resume.pdf">Resume (PDF)</a>
+              <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener">LinkedIn</a>
             </div>
-          ))}
-        </dl>
-        <p class="ab-brands" data-blur>{about.brands}</p>
-        <div class="ab-now" data-blur>
-          <p class="ab-label">Currently</p>
-          <p class="ab-now-role">{current.title}, {current.company}</p>
-          <div class="ab-now-links">
-            <a href="/assets/nick-kidd-resume.pdf">Resume (PDF)</a>
-            <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener">LinkedIn</a>
           </div>
         </div>
       </div>
@@ -239,29 +231,17 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .ab-word.is-key { font-variation-settings: 'wght' 600; }
   .ab-statement:hover .ab-word { font-variation-settings: 'wght' 200; }
   .ab-statement .ab-word:hover, .ab-statement:hover .ab-word.is-key { font-variation-settings: 'wght' 700; }
-  .ab-lede {
-    margin-top: clamp(28px, 5vh, 56px) !important; margin-left: auto !important;
-    max-width: 36ch; font-size: clamp(18px, 1.7vw, 26px); line-height: 1.45;
-  }
-
-  /* ---------- the proof, and who, right now ---------- */
-  .ab-band {
-    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 6vw, 120px); align-items: center;
-    padding: 0 var(--gutter) clamp(80px, 12vh, 160px);
+  .ab-intro {
+    display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(28px, 6vw, 120px); align-items: end;
+    margin-top: clamp(48px, 8vh, 96px);
   }
   .ab-portrait { margin: 0; }
   .ab-portrait img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
-  .ab-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 56px); margin: 0; }
-  .ab-stat-num {
-    display: inline-block; font-family: var(--display);
-    font-size: clamp(48px, 5.2vw, 96px); font-weight: 300; line-height: 0.9; letter-spacing: -0.04em;
-  }
-  .ab-stat-label {
-    margin: 16px 0 0; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
-  }
-  .ab-brands {
-    margin-top: clamp(32px, 5vh, 56px) !important; padding-top: 22px; border-top: 1px solid var(--rule);
-    font-family: var(--display); font-size: clamp(18px, 1.7vw, 26px); line-height: 1.3;
+  .ab-intro-copy { max-width: 40ch; font-size: clamp(18px, 1.7vw, 26px); }
+  .ab-lede { font-family: var(--display); font-size: clamp(22px, 2.2vw, 34px); line-height: 1.3; letter-spacing: -0.01em; }
+  .ab-proof-line {
+    margin-top: clamp(20px, 3vh, 32px) !important;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.8; text-transform: uppercase; color: var(--muted);
   }
   .ab-now {
     margin-top: clamp(32px, 5vh, 56px); padding: 22px 0 0; border-top: 1px solid var(--rule);
@@ -394,10 +374,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .ab-job-years { padding-top: 0; }
   }
   @media (max-width: 767px) {
-    .ab-band { grid-template-columns: minmax(0, 1fr); }
-    .ab-lede { margin-left: 0 !important; }
-    .ab-stats { grid-template-columns: minmax(0, 1fr); }
-    .ab-stat-num { font-size: 18vw; }
+    .ab-intro { grid-template-columns: minmax(0, 1fr); }
     .ab-strength-grid { grid-template-columns: minmax(0, 1fr); }
     .ab-strength:nth-child(n) { padding-left: 0; border-left: 0; }
     .ab-award { grid-template-columns: minmax(0, 1fr) minmax(0, 4fr); row-gap: 6px; }
