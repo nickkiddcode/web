@@ -1,14 +1,12 @@
 {
-  "quote": "I find the story of every brand",
-  "quotePara": "One of my favorite challenges is mining the core of a brand. It's the place where science, art, business, and a little bit of fantasy all collide. But when you find the story, everything else falls into place.",
-  "heroImg": "/assets/664e7db2648a5782b418f4b4_423004500_10232452459319571_5923361437801515210_n.jpg",
-  "heroHeading": "Hey, I'm Nick.",
-  "heroParas": [
-    "I'm a nerd. So, I'm super passionate about everything I like. I hyper focus on the science of attention like reading the Dungeon Master's Guide. I reverse engineer stories to solve exactly how they evoke emotion.",
-    "I've been called a \"midnight oil connoisseur\", as I'm always up late learning new skills, studying the latest tools, and running my own businesses.",
-    "I have a comprehensive background in B2C, B2B, UX, Web Design, Operations, and more. I'm a hands-on leader serving my team from the bottom up.",
-    "When I'm not pitching to CEOs and stakeholders, I like to write fantasy stories and run my own small businesses from home."
+  "eyebrow": "Creative Director. Dallas-Fort Worth. Remote.",
+  "headline": "I cut an office in half to sell a chip",
+  "intro": "Most of what I sell, you'll never see. My job is making people feel it anyway.",
+  "proof": [
+    "+60% brand preference. +59% purchase intent.",
+    "Qualcomm, Snapdragon, Fluence, Audi, Samsung."
   ],
+  "heroImg": "/assets/664e7db2648a5782b418f4b4_423004500_10232452459319571_5923361437801515210_n.jpg",
   "experience": [
     {
       "year": "2024 - now",
@@ -46,23 +44,28 @@
   "beliefs": [
     {
       "num": "01",
-      "title": "Craft Matters",
-      "text": "Every pixel, every word, every interaction. The details tell a story."
+      "title": "Move the problem somewhere people live.",
+      "text": "A spec is easy to ignore. A CEO with his suit cut in half isn't. Put the problem where people already have an opinion. Then take a side."
     },
     {
       "num": "02",
-      "title": "Strategy before aesthetics",
-      "text": "Beautiful work that doesn't solve a problem is just decoration."
+      "title": "Question the brief first.",
+      "text": "Clients show up with a diagnosis. I want to know what's behind it. What's broken? What does winning look like? Answer that before anyone sees an idea."
     },
     {
       "num": "03",
-      "title": "Collaboration over ego",
-      "text": "The best work happens when everyone brings their expertise to the table."
+      "title": "Make it for the buyer.",
+      "text": "Most B2B ads are built to impress the client's boss. Every review adds one more feature until it's a sales sheet. I make brave creative that gets results."
     },
     {
       "num": "04",
-      "title": "Simplicity wins",
-      "text": "The most powerful ideas are often the simplest ones."
+      "title": "Go wide, then get ruthless.",
+      "text": "Bad ideas early are fine. At the end, an idea has to be ownable, scalable, and talk like a f*cking human being. If it passes, I fight for it."
+    },
+    {
+      "num": "05",
+      "title": "Human-led AI.",
+      "text": "AI is a force multiplier when you point it at what it's good at. Research. The bones of an idea. Used everywhere, it makes everything average. Taste stays human."
     }
   ],
   "testimonials": [
