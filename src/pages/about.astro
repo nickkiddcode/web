@@ -2,7 +2,7 @@
 // About — rebuilt in the homepage's language: Zalando Sans at display sizes, the brand
 // mesh on the words that matter, black panels for the proof, the blur reveal, and the
 // variable-weight hover from the hero. Ordered the way a senior hire gets read: the
-// idea, who he is right now, what he's strongest at, how he leads, the path, who he's done it for,
+// idea, who he is right now, how he thinks, what he's strongest at, the path, who he's done it for,
 // what it's won, and what the people who worked with him say.
 // All copy comes from src/data/about.json (Nick's words, verbatim) — this file is layout.
 import Base from '../layouts/Base.astro';
@@ -25,23 +25,24 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="ab-meta" data-blur>
         <span>{about.eyebrow}</span>
       </div>
-      <div class="ab-hero-grid">
-        <div class="ab-hero-main">
-          <h1 class="ab-statement" data-blur>
-            <span class="sr-only">About Nick Kidd — </span>
-            {statementWords.map((w, i) => (
-              <>
-                <span class:list={['ab-word', w.toLowerCase() === 'chip' && 'mesh mesh-text is-key']}>{w}</span>
-                {i < statementWords.length - 1 && ' '}
-              </>
-            ))}
-          </h1>
-          <div class="ab-hero-copy">
-            <p class="ab-lede" data-blur>{about.intro}</p>
-            <p class="ab-proof-line" data-blur>
-              {about.proof.map((line, i) => (<>{i > 0 && <br />}{line}</>))}
-            </p>
-          </div>
+      <h1 class="ab-statement" data-blur>
+        <span class="sr-only">About Nick Kidd — </span>
+        {statementWords.map((w, i) => (
+          <>
+            <span class:list={['ab-word', w.toLowerCase() === 'chip' && 'mesh mesh-text is-key']}>{w}</span>
+            {i < statementWords.length - 1 && ' '}
+          </>
+        ))}
+      </h1>
+      <div class="ab-intro">
+        <figure class="ab-portrait" data-blur>
+          <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" />
+        </figure>
+        <div class="ab-intro-copy">
+          <p class="ab-lede" data-blur>{about.intro}</p>
+          <p class="ab-proof-line" data-blur>
+            {about.proof.map((line, i) => (<>{i > 0 && <br />}{line}</>))}
+          </p>
           <div class="ab-now" data-blur>
             <p class="ab-label">Currently</p>
             <p class="ab-now-role">{current.title}, {current.company}</p>
@@ -51,24 +52,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
             </div>
           </div>
         </div>
-        <figure class="ab-portrait" data-blur>
-          <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" />
-        </figure>
       </div>
-    </section>
-
-    {/* ---------- what he's strongest at ---------- */}
-    <section class="ab-dark ab-strengths" aria-labelledby="ab-strengths-h">
-      <h2 id="ab-strengths-h" class="ab-label ab-label--dark" data-blur>Primary strengths</h2>
-      <ul class="ab-strength-grid">
-        {about.strengths.map((s, i) => (
-          <li class="ab-strength" data-blur>
-            <span class="ab-strength-num">{pad(i + 1)}</span>
-            <h3 class="ab-strength-name">{s.name}</h3>
-            <p class="ab-strength-detail">{s.detail}</p>
-          </li>
-        ))}
-      </ul>
     </section>
 
     {/* ---------- how he leads ---------- */}
@@ -85,6 +69,20 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </li>
         ))}
       </ol>
+    </section>
+
+    {/* ---------- what he's strongest at ---------- */}
+    <section class="ab-dark ab-strengths" aria-labelledby="ab-strengths-h">
+      <h2 id="ab-strengths-h" class="ab-label ab-label--dark" data-blur>Primary strengths</h2>
+      <ul class="ab-strength-grid">
+        {about.strengths.map((s, i) => (
+          <li class="ab-strength" data-blur>
+            <span class="ab-strength-num">{pad(i + 1)}</span>
+            <h3 class="ab-strength-name">{s.name}</h3>
+            <p class="ab-strength-detail">{s.detail}</p>
+          </li>
+        ))}
+      </ul>
     </section>
 
     {/* ---------- the path ---------- */}
@@ -226,29 +224,27 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
   .ab-statement {
     font-family: var(--display);
-    font-size: clamp(46px, 6.6vw, 124px); font-weight: 300; line-height: 0.94; letter-spacing: -0.03em;
-    max-width: 12ch; text-wrap: balance;
+    font-size: clamp(46px, 8.6vw, 156px); font-weight: 300; line-height: 0.94; letter-spacing: -0.03em;
+    max-width: 13ch; text-wrap: balance;
   }
   .ab-word { display: inline-block; font-variation-settings: 'wght' 300; transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
   .ab-word.is-key { font-variation-settings: 'wght' 600; }
   .ab-statement:hover .ab-word { font-variation-settings: 'wght' 200; }
   .ab-statement .ab-word:hover, .ab-statement:hover .ab-word.is-key { font-variation-settings: 'wght' 700; }
-  .ab-hero-copy { margin-top: clamp(28px, 5vh, 56px); max-width: 44ch; font-size: clamp(17px, 1.5vw, 22px); }
-  .ab-lede {
-    font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55;
-  }
-  .ab-proof-line {
-    margin-top: 18px !important;
-    font-size: 12px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.8; text-transform: uppercase; color: var(--muted);
-  }
-
-  .ab-hero-grid {
-    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(28px, 5vw, 96px); align-items: end;
+  .ab-intro {
+    display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(28px, 6vw, 120px); align-items: end;
+    margin-top: clamp(48px, 8vh, 96px);
   }
   .ab-portrait { margin: 0; }
   .ab-portrait img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .ab-intro-copy { max-width: 40ch; font-size: clamp(18px, 1.7vw, 26px); }
+  .ab-lede { font-family: var(--display); font-size: clamp(22px, 2.2vw, 34px); line-height: 1.3; letter-spacing: -0.01em; }
+  .ab-proof-line {
+    margin-top: clamp(20px, 3vh, 32px) !important;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.8; text-transform: uppercase; color: var(--muted);
+  }
   .ab-now {
-    margin-top: clamp(32px, 5vh, 56px); max-width: 44ch; padding: 22px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    margin-top: clamp(32px, 5vh, 56px); padding: 22px 0 0; border-top: 1px solid var(--rule);
     display: grid; gap: 10px;
   }
   .ab-now-role { font-family: var(--display); font-size: clamp(18px, 1.6vw, 24px); line-height: 1.25; }
@@ -378,7 +374,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .ab-job-years { padding-top: 0; }
   }
   @media (max-width: 767px) {
-    .ab-hero-grid { grid-template-columns: minmax(0, 1fr); }
+    .ab-intro { grid-template-columns: minmax(0, 1fr); }
     .ab-strength-grid { grid-template-columns: minmax(0, 1fr); }
     .ab-strength:nth-child(n) { padding-left: 0; border-left: 0; }
     .ab-award { grid-template-columns: minmax(0, 1fr) minmax(0, 4fr); row-gap: 6px; }
