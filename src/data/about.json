@@ -2,10 +2,17 @@
   "eyebrow": "Creative Director. Dallas-Fort Worth. Remote.",
   "headline": "I cut an office in half to sell a chip",
   "intro": "Most of what I sell, you'll never see. My job is making people feel it anyway.",
-  "proof": [
-    "+60% brand preference. +59% purchase intent.",
-    "Qualcomm, Snapdragon, Fluence, Audi, Samsung."
+  "stats": [
+    {
+      "value": "+60%",
+      "label": "brand preference"
+    },
+    {
+      "value": "+59%",
+      "label": "purchase intent"
+    }
   ],
+  "brands": "Qualcomm, Snapdragon, Fluence, Audi, Samsung.",
   "heroImg": "/assets/664e7db2648a5782b418f4b4_423004500_10232452459319571_5923361437801515210_n.jpg",
   "experience": [
     {

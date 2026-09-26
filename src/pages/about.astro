@@ -25,35 +25,41 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="ab-meta" data-blur>
         <span>{about.eyebrow}</span>
       </div>
-      <div class="ab-hero-grid">
-        <div class="ab-hero-main">
-          <h1 class="ab-statement" data-blur>
-            <span class="sr-only">About Nick Kidd — </span>
-            {statementWords.map((w, i) => (
-              <>
-                <span class:list={['ab-word', w.toLowerCase() === 'chip' && 'mesh mesh-text is-key']}>{w}</span>
-                {i < statementWords.length - 1 && ' '}
-              </>
-            ))}
-          </h1>
-          <div class="ab-hero-copy">
-            <p class="ab-lede" data-blur>{about.intro}</p>
-            <p class="ab-proof-line" data-blur>
-              {about.proof.map((line, i) => (<>{i > 0 && <br />}{line}</>))}
-            </p>
-          </div>
-          <div class="ab-now" data-blur>
-            <p class="ab-label">Currently</p>
-            <p class="ab-now-role">{current.title}, {current.company}</p>
-            <div class="ab-now-links">
-              <a href="/assets/nick-kidd-resume.pdf">Resume (PDF)</a>
-              <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener">LinkedIn</a>
+      <h1 class="ab-statement" data-blur>
+        <span class="sr-only">About Nick Kidd — </span>
+        {statementWords.map((w, i) => (
+          <>
+            <span class:list={['ab-word', w.toLowerCase() === 'chip' && 'mesh mesh-text is-key']}>{w}</span>
+            {i < statementWords.length - 1 && ' '}
+          </>
+        ))}
+      </h1>
+      <p class="ab-lede" data-blur>{about.intro}</p>
+    </section>
+
+    {/* ---------- the proof, and who, right now ---------- */}
+    <section class="ab-dark ab-band" aria-label="Results">
+      <figure class="ab-portrait" data-blur>
+        <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" />
+      </figure>
+      <div class="ab-band-copy">
+        <dl class="ab-stats" data-blur>
+          {about.stats.map((st) => (
+            <div class="ab-stat">
+              <dt class="ab-stat-num mesh mesh-text">{st.value}</dt>
+              <dd class="ab-stat-label">{st.label}</dd>
             </div>
+          ))}
+        </dl>
+        <p class="ab-brands" data-blur>{about.brands}</p>
+        <div class="ab-now" data-blur>
+          <p class="ab-label ab-label--dark">Currently</p>
+          <p class="ab-now-role">{current.title}, {current.company}</p>
+          <div class="ab-now-links">
+            <a href="/assets/nick-kidd-resume.pdf">Resume (PDF)</a>
+            <a href="https://www.linkedin.com/in/nickkidd/" target="_blank" rel="noopener">LinkedIn</a>
           </div>
         </div>
-        <figure class="ab-portrait" data-blur>
-          <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" />
-        </figure>
       </div>
     </section>
 
@@ -226,38 +232,48 @@ const pad = (n: number) => String(n).padStart(2, '0');
   }
   .ab-statement {
     font-family: var(--display);
-    font-size: clamp(46px, 6.6vw, 124px); font-weight: 300; line-height: 0.94; letter-spacing: -0.03em;
-    max-width: 12ch; text-wrap: balance;
+    font-size: clamp(46px, 8.6vw, 156px); font-weight: 300; line-height: 0.94; letter-spacing: -0.03em;
+    max-width: 13ch; text-wrap: balance;
   }
   .ab-word { display: inline-block; font-variation-settings: 'wght' 300; transition: font-variation-settings 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
   .ab-word.is-key { font-variation-settings: 'wght' 600; }
   .ab-statement:hover .ab-word { font-variation-settings: 'wght' 200; }
   .ab-statement .ab-word:hover, .ab-statement:hover .ab-word.is-key { font-variation-settings: 'wght' 700; }
-  .ab-hero-copy { margin-top: clamp(28px, 5vh, 56px); max-width: 44ch; font-size: clamp(17px, 1.5vw, 22px); }
   .ab-lede {
-    font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55;
-  }
-  .ab-proof-line {
-    margin-top: 18px !important;
-    font-size: 12px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.8; text-transform: uppercase; color: var(--muted);
+    margin-top: clamp(28px, 5vh, 56px) !important; margin-left: auto !important;
+    max-width: 36ch; font-size: clamp(18px, 1.7vw, 26px); line-height: 1.45;
   }
 
-  .ab-hero-grid {
-    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(28px, 5vw, 96px); align-items: end;
+  /* ---------- the proof, and who, right now ---------- */
+  .ab-band {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 6vw, 120px); align-items: center;
+    padding: clamp(56px, 10vh, 140px) var(--gutter);
   }
   .ab-portrait { margin: 0; }
   .ab-portrait img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .ab-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 56px); margin: 0; }
+  .ab-stat-num {
+    display: inline-block; font-family: var(--display);
+    font-size: clamp(52px, 6.4vw, 116px); font-weight: 400; line-height: 0.9; letter-spacing: -0.04em;
+  }
+  .ab-stat-label {
+    margin: 16px 0 0; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(239, 241, 243, 0.7);
+  }
+  .ab-brands {
+    margin-top: clamp(32px, 5vh, 56px) !important; padding-top: 22px; border-top: 1px solid rgba(239, 241, 243, 0.18);
+    font-family: var(--display); font-size: clamp(18px, 1.7vw, 26px); line-height: 1.3;
+  }
   .ab-now {
-    margin-top: clamp(32px, 5vh, 56px); max-width: 44ch; padding: 22px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    margin-top: clamp(32px, 5vh, 56px); padding: 22px 0 0; border-top: 1px solid rgba(239, 241, 243, 0.18);
     display: grid; gap: 10px;
   }
   .ab-now-role { font-family: var(--display); font-size: clamp(18px, 1.6vw, 24px); line-height: 1.25; }
   .ab-now-links { display: flex; gap: 22px; margin-top: 4px; }
   .ab-now-links a {
-    color: var(--ink); text-decoration: none; font-size: 15px;
-    border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+    color: #eff1f3; text-decoration: none; font-size: 15px;
+    border-bottom: 1px solid #eff1f3; padding-bottom: 2px;
   }
-  .ab-now-links a:hover { color: var(--purple, #6100b9); border-color: var(--purple, #6100b9); }
+  .ab-now-links a:hover { color: #c9b0ec; border-color: #c9b0ec; }
 
   /* ---------- black panels ---------- */
   .ab-dark { background: #000; color: #eff1f3; }
@@ -378,7 +394,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .ab-job-years { padding-top: 0; }
   }
   @media (max-width: 767px) {
-    .ab-hero-grid { grid-template-columns: minmax(0, 1fr); }
+    .ab-band { grid-template-columns: minmax(0, 1fr); }
+    .ab-lede { margin-left: 0 !important; }
+    .ab-stats { grid-template-columns: minmax(0, 1fr); }
+    .ab-stat-num { font-size: 22vw; }
     .ab-strength-grid { grid-template-columns: minmax(0, 1fr); }
     .ab-strength:nth-child(n) { padding-left: 0; border-left: 0; }
     .ab-award { grid-template-columns: minmax(0, 1fr) minmax(0, 4fr); row-gap: 6px; }
