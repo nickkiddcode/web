@@ -34,10 +34,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </>
         ))}
       </h1>
-      <p class="ab-lede" data-blur>{about.intro}</p>
-      <p class="ab-proof-line" data-blur>
-        {about.proof.map((line, i) => (<>{i > 0 && <br />}{line}</>))}
-      </p>
+      <div class="ab-hero-copy">
+        <p class="ab-lede" data-blur>{about.intro}</p>
+        <p class="ab-proof-line" data-blur>
+          {about.proof.map((line, i) => (<>{i > 0 && <br />}{line}</>))}
+        </p>
+      </div>
     </section>
 
     {/* ---------- who, right now ---------- */}
@@ -233,12 +235,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .ab-word.is-key { font-variation-settings: 'wght' 600; }
   .ab-statement:hover .ab-word { font-variation-settings: 'wght' 200; }
   .ab-statement .ab-word:hover, .ab-statement:hover .ab-word.is-key { font-variation-settings: 'wght' 700; }
+  .ab-hero-copy { margin: clamp(28px, 5vh, 56px) 0 0 auto; max-width: 44ch; font-size: clamp(17px, 1.5vw, 22px); }
   .ab-lede {
-    margin-top: clamp(28px, 5vh, 56px) !important; margin-left: auto !important;
-    max-width: 44ch; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55;
+    font-size: clamp(17px, 1.5vw, 22px); line-height: 1.55;
   }
   .ab-proof-line {
-    margin-top: 18px !important; margin-left: auto !important; max-width: 44ch;
+    margin-top: 18px !important;
     font-size: 12px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.8; text-transform: uppercase; color: var(--muted);
   }
 
@@ -382,8 +384,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   @media (max-width: 767px) {
     .ab-intro { grid-template-columns: minmax(0, 1fr); }
     .ab-portrait { position: static; }
-    .ab-lede { margin-left: 0 !important; }
-    .ab-meta span:last-child { text-align: right; }
+    .ab-hero-copy { margin-left: 0; }
     .ab-strength-grid { grid-template-columns: minmax(0, 1fr); }
     .ab-strength:nth-child(n) { padding-left: 0; border-left: 0; }
     .ab-award { grid-template-columns: minmax(0, 1fr) minmax(0, 4fr); row-gap: 6px; }
