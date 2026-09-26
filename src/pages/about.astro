@@ -38,7 +38,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </section>
 
     {/* ---------- the proof, and who, right now ---------- */}
-    <section class="ab-dark ab-band" aria-label="Results">
+    <section class="ab-band" aria-label="Results">
       <figure class="ab-portrait" data-blur>
         <img src={about.heroImg} alt="Nick Kidd at work under a neon '24 hours' sign" />
       </figure>
@@ -46,14 +46,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
         <dl class="ab-stats" data-blur>
           {about.stats.map((st) => (
             <div class="ab-stat">
-              <dt class="ab-stat-num mesh mesh-text">{st.value}</dt>
+              <dt class="ab-stat-num">{st.value}</dt>
               <dd class="ab-stat-label">{st.label}</dd>
             </div>
           ))}
         </dl>
         <p class="ab-brands" data-blur>{about.brands}</p>
         <div class="ab-now" data-blur>
-          <p class="ab-label ab-label--dark">Currently</p>
+          <p class="ab-label">Currently</p>
           <p class="ab-now-role">{current.title}, {current.company}</p>
           <div class="ab-now-links">
             <a href="/assets/nick-kidd-resume.pdf">Resume (PDF)</a>
@@ -247,33 +247,33 @@ const pad = (n: number) => String(n).padStart(2, '0');
   /* ---------- the proof, and who, right now ---------- */
   .ab-band {
     display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 6vw, 120px); align-items: center;
-    padding: clamp(56px, 10vh, 140px) var(--gutter);
+    padding: 0 var(--gutter) clamp(80px, 12vh, 160px);
   }
   .ab-portrait { margin: 0; }
   .ab-portrait img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
   .ab-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 56px); margin: 0; }
   .ab-stat-num {
     display: inline-block; font-family: var(--display);
-    font-size: clamp(52px, 6.4vw, 116px); font-weight: 400; line-height: 0.9; letter-spacing: -0.04em;
+    font-size: clamp(48px, 5.2vw, 96px); font-weight: 300; line-height: 0.9; letter-spacing: -0.04em;
   }
   .ab-stat-label {
-    margin: 16px 0 0; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(239, 241, 243, 0.7);
+    margin: 16px 0 0; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
   }
   .ab-brands {
-    margin-top: clamp(32px, 5vh, 56px) !important; padding-top: 22px; border-top: 1px solid rgba(239, 241, 243, 0.18);
+    margin-top: clamp(32px, 5vh, 56px) !important; padding-top: 22px; border-top: 1px solid var(--rule);
     font-family: var(--display); font-size: clamp(18px, 1.7vw, 26px); line-height: 1.3;
   }
   .ab-now {
-    margin-top: clamp(32px, 5vh, 56px); padding: 22px 0 0; border-top: 1px solid rgba(239, 241, 243, 0.18);
+    margin-top: clamp(32px, 5vh, 56px); padding: 22px 0 0; border-top: 1px solid var(--rule);
     display: grid; gap: 10px;
   }
   .ab-now-role { font-family: var(--display); font-size: clamp(18px, 1.6vw, 24px); line-height: 1.25; }
   .ab-now-links { display: flex; gap: 22px; margin-top: 4px; }
   .ab-now-links a {
-    color: #eff1f3; text-decoration: none; font-size: 15px;
-    border-bottom: 1px solid #eff1f3; padding-bottom: 2px;
+    color: var(--ink); text-decoration: none; font-size: 15px;
+    border-bottom: 1px solid var(--ink); padding-bottom: 2px;
   }
-  .ab-now-links a:hover { color: #c9b0ec; border-color: #c9b0ec; }
+  .ab-now-links a:hover { color: var(--purple, #6100b9); border-color: var(--purple, #6100b9); }
 
   /* ---------- black panels ---------- */
   .ab-dark { background: #000; color: #eff1f3; }
@@ -397,7 +397,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     .ab-band { grid-template-columns: minmax(0, 1fr); }
     .ab-lede { margin-left: 0 !important; }
     .ab-stats { grid-template-columns: minmax(0, 1fr); }
-    .ab-stat-num { font-size: 22vw; }
+    .ab-stat-num { font-size: 18vw; }
     .ab-strength-grid { grid-template-columns: minmax(0, 1fr); }
     .ab-strength:nth-child(n) { padding-left: 0; border-left: 0; }
     .ab-award { grid-template-columns: minmax(0, 1fr) minmax(0, 4fr); row-gap: 6px; }
